@@ -1,0 +1,5 @@
+{
+  "base_path": "F:\\Works\\ygopro-client\\",
+  "files_json_output": "../server/files.json",
+  "packages_json_output": "../server/packages.json"
+}

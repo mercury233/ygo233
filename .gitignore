@@ -3,6 +3,9 @@
 jsconfig.json
 
 /node_modules
+/.vscode
+
+/server
 
 test*
 

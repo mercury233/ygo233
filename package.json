@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/mercury233/ygo233/issues"
   },
-  "homepage": "https://github.com/mercury233/ygo233"
+  "homepage": "https://github.com/mercury233/ygo233",
+  "dependencies": {
+    "md5-file": "^3.1.0"
+  }
 }

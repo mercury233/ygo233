@@ -1,0 +1,13 @@
+{
+  "ygopro_exe": "ygopro.exe",
+  "files": [
+    "cards.cdb",
+    "lflist.conf",
+    "strings.conf"
+  ],
+  "folders": [
+    "pics",
+    "pics\\thumbnail",
+    "pics\\field"
+  ]
+}
