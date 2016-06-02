@@ -1,0 +1,22 @@
+{
+  "name": "ygo233",
+  "version": "0.0.1",
+  "description": "The client of ygosrv233.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mercury233/ygo233"
+  },
+  "keywords": [
+    "ygopro"
+  ],
+  "author": "mercury233",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mercury233/ygo233/issues"
+  },
+  "homepage": "https://github.com/mercury233/ygo233"
+}

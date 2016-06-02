@@ -1,0 +1,16 @@
+# ignore
+
+jsconfig.json
+
+/node_modules
+
+test*
+
+*.tmp
+*.bak
+*.log
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
