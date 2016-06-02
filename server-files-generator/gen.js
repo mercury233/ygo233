@@ -57,13 +57,31 @@ for (var i in ygopro_files.folders) {
 
 fs.writeFileSync(config.files_json_output, JSON.stringify(files_json));
 
-spawnSync(config.7z_exe, ["a", "-i!script\\*", "exe.7z", "ygopro.exe"], { cwd: config.base_path, env: process.env });
+var packages_json={};
+var packages_array=[];
 
-spawnSync(config.7z_exe, ["a", "db.7z", "cards.cdb"], { cwd: config.base_path, env: process.env });
+spawnSync(config.sevenzip_exe, ["a", "-i!script\\*", "exe.7z", "ygopro.exe"], { cwd: config.base_path, env: process.env });
+var exe_item={};
+exe_item.name="主程序和脚本";
+exe_item.filename="exe.7z";
+exe_item.filecount=1;
+exe_item.filesize=fs.statSync(config.base_path+"exe.7z").size;
+exe_item.files=["ygopro.exe"];
+packages_array.push(exe_item);
+
+spawnSync(config.sevenzip_exe, ["a", "db.7z", "cards.cdb"], { cwd: config.base_path, env: process.env });
+var db_item={};
+db_item.name="数据库";
+db_item.filename="db.7z";
+db_item.filecount=1;
+db_item.filesize=fs.statSync(config.base_path+"db.7z").size;
+db_item.files=["cards.cdb"];
+packages_array.push(db_item);
 
 var packages = fs.readdirSync(config.packages_path);
 for (var i in packages) {
   var pack = packages[i];
+  var packname = pack.replace(".ydk", "");
   
   var pack_text = fs.readFileSync(config.packages_path+pack,{encoding:"ASCII"})
   var pack_text_array = pack_text.split("\n");
@@ -76,18 +94,33 @@ for (var i in packages) {
   }
   
   var args = ["a"];
+  var files = [];
   
   if (pack.indexOf(".ydk")>0) {
     fs.writeFileSync(config.base_path+"deck\\new_"+pack, pack_text);
     args.push("-i!deck\\new_"+pack);
   }
   
-  args.push(pack.replace(".ydk", "") + ".7z");
+  args.push(packname + ".7z");
 
   for (var j in pack_array) {
     args.push("pics\\"+pack_array[j]+".jpg");
     args.push("pics\\thumbnail\\"+pack_array[j]+".jpg");
+    files.push("pics\\"+pack_array[j]+".jpg");
+    files.push("pics\\thumbnail\\"+pack_array[j]+".jpg");
   }
   
-  spawnSync(config.7z_exe, args, { cwd: config.base_path, env: process.env });
+  spawnSync(config.sevenzip_exe, args, { cwd: config.base_path, env: process.env });
+  
+  var item={};
+  item.name=packname+"卡图包";
+  item.filename=packname + ".7z";
+  item.filecount=files.length;
+  item.filesize=fs.statSync(config.base_path+packname+".7z").size;
+  item.files=files;
+  packages_array.push(item);
 }
+
+packages_json.packages=packages_array;
+
+fs.writeFileSync(config.packages_json_output, JSON.stringify(packages_json));
