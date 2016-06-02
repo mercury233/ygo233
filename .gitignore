@@ -6,6 +6,7 @@ jsconfig.json
 /.vscode
 
 /server
+/pic-pack
 
 /pics
 cards.cdb

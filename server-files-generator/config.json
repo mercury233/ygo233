@@ -1,5 +1,7 @@
 {
+  "7z_exe": "7zg",
   "base_path": "F:\\Works\\ygopro-client\\",
   "files_json_output": "../server/files.json",
+  "packages_path": "../pic-pack/",
   "packages_json_output": "../server/packages.json"
 }

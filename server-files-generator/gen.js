@@ -1,5 +1,6 @@
 var fs = require("fs");
 var md5File = require("md5-file");
+var spawnSync = require("child_process").spawnSync;
 
 //相关文件路径
 var config = require("./config.json");
@@ -55,3 +56,38 @@ for (var i in ygopro_files.folders) {
 }
 
 fs.writeFileSync(config.files_json_output, JSON.stringify(files_json));
+
+spawnSync(config.7z_exe, ["a", "-i!script\\*", "exe.7z", "ygopro.exe"], { cwd: config.base_path, env: process.env });
+
+spawnSync(config.7z_exe, ["a", "db.7z", "cards.cdb"], { cwd: config.base_path, env: process.env });
+
+var packages = fs.readdirSync(config.packages_path);
+for (var i in packages) {
+  var pack = packages[i];
+  
+  var pack_text = fs.readFileSync(config.packages_path+pack,{encoding:"ASCII"})
+  var pack_text_array = pack_text.split("\n");
+  var pack_array = [];
+  for (var i in pack_text_array) {
+    var card=parseInt(pack_text_array[i]);
+    if (!isNaN(card)) {
+      pack_array.push(card);
+    }
+  }
+  
+  var args = ["a"];
+  
+  if (pack.indexOf(".ydk")>0) {
+    fs.writeFileSync(config.base_path+"deck\\new_"+pack, pack_text);
+    args.push("-i!deck\\new_"+pack);
+  }
+  
+  args.push(pack.replace(".ydk", "") + ".7z");
+
+  for (var j in pack_array) {
+    args.push("pics\\"+pack_array[j]+".jpg");
+    args.push("pics\\thumbnail\\"+pack_array[j]+".jpg");
+  }
+  
+  spawnSync(config.7z_exe, args, { cwd: config.base_path, env: process.env });
+}
