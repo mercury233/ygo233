@@ -7,6 +7,12 @@ jsconfig.json
 
 /server
 
+/pics
+cards.cdb
+lflist.conf
+strings.conf
+ygopro.exe
+
 test*
 
 *.tmp
