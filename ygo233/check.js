@@ -48,4 +48,38 @@ for(var folder in files_json.folders) {
   }
 }
 
+//console.log(JSON.stringify(files_need_update));
+
+var packages_download = [];
+
+var packages_json = require("../server/packages.json");
+var pack_size = 0;
+
+for(var i in packages_json.packages) {
+  var package = packages_json.packages[i];
+  var count=0;
+  for(var j in package.files) {
+    var file=package.files[j];
+    var index=files_need_update.indexOf(file);
+    if (index>=0) {
+      count++;
+    }
+  }
+  if (count>=package.filecount*0.66 || count>=100) {
+    packages_download.push(package.filename);
+    pack_size += package.filesize;
+    for(var k in package.files) {
+      var file=package.files[k];
+      var index=files_need_update.indexOf(file);
+      if (index>=0) {
+        files_need_update.splice(index, 1);
+      }
+    }
+  }
+}
+
 console.log(JSON.stringify(files_need_update));
+
+console.log(JSON.stringify(packages_download));
+
+console.log(pack_size);
