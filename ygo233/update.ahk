@@ -47,6 +47,10 @@ if (localconfig.version!=newconfig.version)
 		gosub, ExitSub
 	}
 }
+else
+{
+	gosub, ExitSub
+}
 
 return
 
@@ -83,14 +87,14 @@ download_count:=0
 for each, filename in download_json.packages_download
 {
 	url := newconfig.download_base . "update/" . filename
-	ret := aria2.addUri( [url] , {dir: "downloads\pack"})
+	ret := aria2.addUri( [url] , {dir: "downloads\packages"})
 	download_count++
 }
 
 for each, filename in download_json.files_download
 {
 	SplitPath, filename,, filedir
-	url := newconfig.download_base . "ygopro/" . StrReplace(filename,"\", "/")
+	url := newconfig.download_base . "ygopro/" . StrReplace(filename, "\", "/")
 	ret := aria2.addUri( [url] , {dir: "downloads\" . filedir})
 	download_count++
 }
@@ -114,6 +118,27 @@ return
 
 InstallUpdate:
 GuiControl,, status, 正在安装更新...
+
+Loop, Files, downloads\packages\*.7z
+{
+	RunWait, % "7zg.exe -aoa x """ . A_LoopFileLongPath . """", ..
+}
+
+for each, filename in download_json.files_download
+{
+	FileMove, downloads\%filename%, ..\%filename%, 1
+}
+
+GuiControl,, status, 更新完成！
+
+localconfig.version:=newconfig.version
+newlocalconfig:=JSON_FromObj(localconfig)
+FileDelete, config.json
+FileAppend, % newlocalconfig, *config.json
+
+Sleep, 500
+gosub, ExitSub
+
 return
 
 GuiClose:
