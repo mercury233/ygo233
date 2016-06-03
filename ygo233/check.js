@@ -2,7 +2,8 @@ var fs = require("fs");
 var md5File = require("md5-file");
 
 //相关文件路径
-var config = require("./config.json");
+var config = fs.readFileSync("./config.json");
+config=JSON.parse(config);
 
 //为减小文件大小，取MD5的前8位
 var hash = function(relpath, fullpath) {
@@ -31,7 +32,8 @@ var checkfile = function(relpath, new_hash) {
 
 var files_need_update = [];
 
-var files_json = require("../server/files.json");
+var files_json = fs.readFileSync("./files.json");
+files_json=JSON.parse(files_json);
 
 checkfile(config.ygopro_exe, files_json.ygopro_exe);
 
@@ -52,7 +54,9 @@ for(var folder in files_json.folders) {
 
 var packages_download = [];
 
-var packages_json = require("../server/packages.json");
+var packages_json = fs.readFileSync("./packages.json");
+packages_json=JSON.parse(packages_json);
+
 var pack_size = 0;
 
 for(var i in packages_json.packages) {
@@ -78,8 +82,11 @@ for(var i in packages_json.packages) {
   }
 }
 
-console.log(JSON.stringify(files_need_update));
+var download_json={};
 
-console.log(JSON.stringify(packages_download));
+download_json.files_download=files_need_update;
+download_json.packages_download=packages_download;
+download_json.pack_size=pack_size;
+download_json.files_count=files_need_update.length+packages_download.length;
 
-console.log(pack_size);
+fs.writeFileSync("download.json", JSON.stringify(download_json));

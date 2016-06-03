@@ -1,4 +1,6 @@
 {
   "base_path": "../",
+  "update_url": "http://cdn233.my-card.in/update/version.json",
+  "version": 0,
   "ygopro_exe": "ygopro.exe"
 }
