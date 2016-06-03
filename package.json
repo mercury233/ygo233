@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/mercury233/ygo233",
   "dependencies": {
-    "md5-file": "^3.1.0"
+    "md5-file": "^3.1.0",
+    "nexe": "^1.1.2"
   }
 }

@@ -49,7 +49,8 @@ RunWait, 7zg.exe x data.7z,, Hide
 
 GuiControl,, status, 正在效验文件，约需2分钟，请稍候...
 
-RunWait, node.exe check.js,, Hide
+;RunWait, node.exe check.js,, Hide
+RunWait, check.exe,, Hide
 
 FileRead, download_json, download.json
 download_json:=JSON_ToObj(download_json)

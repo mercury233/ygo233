@@ -4,9 +4,13 @@ jsconfig.json
 
 /node_modules
 /.vscode
+/tmp
 
 /server
 /pic-pack
+/ygo233/check.exe
+/ygo233/update.exe
+/ygo233/update.ahk.ini
 
 /pics
 cards.cdb
