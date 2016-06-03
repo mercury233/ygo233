@@ -60,6 +60,8 @@ fs.writeFileSync(config.files_json_output, JSON.stringify(files_json));
 var packages_json={};
 var packages_array=[];
 
+spawnSync(config.rm_exe, config.rm_cmd, { cwd: config.base_path, env: process.env });
+
 spawnSync(config.sevenzip_exe, ["a", "-i!script\\*", "exe.7z", "ygopro.exe"], { cwd: config.base_path, env: process.env });
 var exe_item={};
 exe_item.name="主程序和脚本";
@@ -79,15 +81,15 @@ db_item.files=["cards.cdb"];
 packages_array.push(db_item);
 
 var packages = fs.readdirSync(config.packages_path);
-for (var i in packages) {
+for (var i = packages.length-1; i >= 0; i--) {
   var pack = packages[i];
-  var packname = pack.replace(".ydk", "");
+  var packname = pack.replace(".ydk", "").replace(".txt", "");
   
   var pack_text = fs.readFileSync(config.packages_path+pack,{encoding:"ASCII"})
   var pack_text_array = pack_text.split("\n");
   var pack_array = [];
-  for (var i in pack_text_array) {
-    var card=parseInt(pack_text_array[i]);
+  for (var j in pack_text_array) {
+    var card=parseInt(pack_text_array[j]);
     if (!isNaN(card)) {
       pack_array.push(card);
     }
@@ -97,23 +99,23 @@ for (var i in packages) {
   var files = [];
   
   if (pack.indexOf(".ydk")>0) {
-    fs.writeFileSync(config.base_path+"deck\\new_"+pack, pack_text);
-    args.push("-i!deck\\new_"+pack);
+    fs.writeFileSync(config.base_path+"deck\\"+pack, pack_text);
+    args.push("-i!deck\\"+pack);
   }
   
   args.push(packname + ".7z");
 
-  for (var j in pack_array) {
-    args.push("pics\\"+pack_array[j]+".jpg");
-    args.push("pics\\thumbnail\\"+pack_array[j]+".jpg");
-    files.push("pics\\"+pack_array[j]+".jpg");
-    files.push("pics\\thumbnail\\"+pack_array[j]+".jpg");
+  for (var k in pack_array) {
+    files.push("pics\\"+pack_array[k]+".jpg");
+    files.push("pics\\thumbnail\\"+pack_array[k]+".jpg");
   }
   
+  args=args.concat(files);
+
   spawnSync(config.sevenzip_exe, args, { cwd: config.base_path, env: process.env });
   
   var item={};
-  item.name=packname+"卡图包";
+  item.name="卡图包 "+packname;
   item.filename=packname + ".7z";
   item.filecount=files.length;
   item.filesize=fs.statSync(config.base_path+packname+".7z").size;

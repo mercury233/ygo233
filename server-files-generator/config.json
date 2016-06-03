@@ -1,5 +1,7 @@
 {
   "sevenzip_exe": "7zg",
+  "rm_exe": "cmd",
+  "rm_cmd": ["/c", "del", "*.7z", "deck\\*.ydk"],
   "base_path": "F:\\Works\\ygopro-client\\",
   "files_json_output": "../server/files.json",
   "packages_path": "../pic-pack/",
