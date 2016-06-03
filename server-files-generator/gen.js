@@ -17,6 +17,9 @@ var hash = function(relpath, fullpath) {
   return h;
 }
 
+spawnSync(config.rm_exe, config.rm_cmd_base, { cwd: config.base_path, env: process.env });
+spawnSync(config.rm_exe, config.rm_cmd_server, { cwd: config.server_path, env: process.env });
+
 //要生成的YGOPRO所有文件的hash
 var files_json = {};
 
@@ -55,12 +58,10 @@ for (var i in ygopro_files.folders) {
   files_json.folders[folder] = folder_hashes;
 }
 
-fs.writeFileSync(config.files_json_output, JSON.stringify(files_json));
+fs.writeFileSync(config.server_path+"files.json", JSON.stringify(files_json));
 
 var packages_json={};
 var packages_array=[];
-
-spawnSync(config.rm_exe, config.rm_cmd, { cwd: config.base_path, env: process.env });
 
 spawnSync(config.sevenzip_exe, ["a", "-i!script\\*", "exe.7z", "ygopro.exe"], { cwd: config.base_path, env: process.env });
 var exe_item={};
@@ -125,4 +126,10 @@ for (var i = packages.length-1; i >= 0; i--) {
 
 packages_json.packages=packages_array;
 
-fs.writeFileSync(config.packages_json_output, JSON.stringify(packages_json));
+fs.writeFileSync(config.server_path+"packages.json", JSON.stringify(packages_json));
+
+spawnSync(config.mv_exe, config.mv_cmd, { cwd: config.base_path, env: process.env });
+
+spawnSync(config.sevenzip_exe, ["a", "data.7z", "*.json"], { cwd: config.server_path, env: process.env });
+
+spawnSync(config.rm_exe, config.rm_cmd_json, { cwd: config.server_path, env: process.env });

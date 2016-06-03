@@ -1,9 +1,12 @@
 {
   "sevenzip_exe": "7zg",
   "rm_exe": "cmd",
-  "rm_cmd": ["/c", "del", "*.7z", "deck\\*.ydk"],
+  "rm_cmd_base": ["/c", "del", "*.7z", "deck\\*.ydk"],
+  "rm_cmd_server": ["/c", "del", "*.7z", "*.json"],
+  "rm_cmd_json": ["/c", "del", "*.json"],
+  "mv_exe": "cmd",
+  "mv_cmd": ["/c", "move", "*.7z", "..\\ygo233\\server"],
   "base_path": "F:\\Works\\ygopro-client\\",
-  "files_json_output": "../server/files.json",
-  "packages_path": "../pic-pack/",
-  "packages_json_output": "../server/packages.json"
+  "server_path": "F:\\Works\\ygo233\\server\\",
+  "packages_path": "../pic-pack/"
 }
