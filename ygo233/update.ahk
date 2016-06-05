@@ -37,7 +37,6 @@ FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
-FileDelete, aria2c.7z
 FileRemoveDir, downloads, 1
 
 ; 建立GUI
@@ -191,7 +190,7 @@ if (A_OSVersion=="WIN_XP")
 	Process, Exist, aria2c.exe
 	if (ErrorLevel<>aria2cPID)
 	{
-		MsgBox, 17, % WinTitle, 您的XP操作系统早已在两年前被淘汰了，无法正常使用新特性！`n`n按确定关闭程序，或者按取消强行使用旧版。
+		MsgBox, 17, % WinTitle, 您的XP操作系统早已在两年前被淘汰了，无法正常使用新特性！`n`n按确定关闭程序，或者按取消尝试使用旧版。
 		IfMsgBox, OK
 		{
 			run, http://windows.microsoft.com/zh-CN/windows/end-support-help
@@ -203,6 +202,7 @@ if (A_OSVersion=="WIN_XP")
 			GuiControl,, status, 正在下载旧版aria2...
 			URLDownloadToFile, % newconfig.download_base . "xp/aria2c.7z", aria2c.7z
 			RunWait, 7zg.exe -aoa x aria2c.7z
+			FileDelete, aria2c.7z
 			Run, aria2c.exe --conf-path=aria2.conf,, Hide UseErrorLevel, aria2cPID
 			GuiControl,, status, 正在开始下载...
 		}
@@ -314,7 +314,6 @@ FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
-FileDelete, aria2c.7z
 FileRemoveDir, downloads, 1
 Process, Close, % aria2cPID
 DebugLog( "exit" )
