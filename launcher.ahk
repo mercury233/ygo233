@@ -1,5 +1,6 @@
 ﻿#NoTrayIcon
 #NoEnv
+#SingleInstance Ignore
 #Include <JSON_FromObj> ;https://github.com/Jim-VxE/AHK-Lib-JSON_ToObj
 #Include <JSON_ToObj> ;https://github.com/Jim-VxE/AHK-Lib-JSON_ToObj
 #Include <aria2> ;https://autohotkey.com/boards/viewtopic.php?t=4506
@@ -21,6 +22,13 @@ IfNotExist, % localconfig.ygopro_exe
 		FileDelete, ygo233\config.json
 		FileAppend, % newlocalconfig, *ygo233\config.json
 	}
+	else IfExist, ygopro.exe
+	{
+		localconfig.ygopro_exe:="ygopro.exe"
+		newlocalconfig:=JSON_FromObj(localconfig)
+		FileDelete, ygo233\config.json
+		FileAppend, % newlocalconfig, *ygo233\config.json
+	}
 	else
 	{
 		MsgBox, 16, % WinTitle, 未找到YGOPRO主程序。
@@ -31,7 +39,7 @@ IfNotExist, % localconfig.ygopro_exe
 gui, add, button, w200 h30 gRunYGOPRO, 启动游戏
 gui, show,, % WinTitle
 
-run, ygo233\update.exe, ygo233
+run, ygo233\update.exe Background, ygo233
 
 return
 

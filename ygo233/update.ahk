@@ -9,6 +9,7 @@
 ;-----------------------------------------------------------
 #NoTrayIcon
 #NoEnv
+#SingleInstance Ignore
 #Include <aria2> ;https://autohotkey.com/boards/viewtopic.php?t=4506
 #Include <JSON> ;https://github.com/cocobelgica/AutoHotkey-JSON
 SetWorkingDir, %A_ScriptDir%
@@ -16,6 +17,17 @@ SetBatchLines, -1
 SetControlDelay, -1
 FileEncoding, UTF-8-RAW
 OnExit, ExitSub
+
+if 0 >= 1
+{
+	param1 = %1%
+	if (param1=="Background")
+	{
+		BackgroundCheckMode:=1
+	}
+}
+ErrorCount:=0
+Version:="0.0.2"
 
 ;-----------------------------------------------------------
 ; 初始化
@@ -26,10 +38,6 @@ FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
 FileRemoveDir, downloads, 1
-
-; 关闭残留的aria2c，并重新运行
-Process, Close, aria2c.exe
-run, aria2c.exe --conf-path=aria2.conf,, hide, aria2cPID
 
 ; 建立GUI
 Gui, Add, Text, x6 y6 w290 vstatus, 喵喵喵
@@ -44,17 +52,30 @@ localconfig:=JSON.Load(localconfig)
 aria2.url := "http://localhost:" . localconfig.aria2_port . "/jsonrpc"
 aria2.token := "ygo233"
 
+DebugLog( "aria2.url: " . aria2.url )
+
 ;-----------------------------------------------------------
 ; 开始检查更新
 ;-----------------------------------------------------------
-ToolTip, 正在检查更新...
+
+if (BackgroundCheckMode)
+{
+	ToolTip, 正在检查更新...
+}
+else
+{
+	GuiControl,, status, 正在检查更新...
+	Gui, Show, w300 h25, % WinTitle
+}
 
 ; 从配置文件里定义的更新URL读取版本信息
 URLDownloadToFile, % localconfig.update_url, version.json
 FileRead, newconfig, version.json
 newconfig:=JSON.Load(newconfig)
 
-if (localconfig.version!=newconfig.version)
+DebugLog( "newconfig.version: " . newconfig.version )
+
+if (localconfig.version!=newconfig.version && BackgroundCheckMode)
 {
 	ToolTip
 	MsgBox, 36, % WinTitle, % "发现新版本，是否更新？`n`n发布日期：" newconfig.date "`n`n更新内容：" newconfig.txt
@@ -67,11 +88,15 @@ if (localconfig.version!=newconfig.version)
 		gosub, ExitSub
 	}
 }
-else
+else if (BackgroundCheckMode)
 {
 	ToolTip, 没有发现新版本
 	Sleep, 2000
 	gosub, ExitSub
+}
+else
+{
+	gosub, StartUpdate
 }
 
 return
@@ -138,6 +163,8 @@ for i, package in packages_json.packages
 		{
 			files_download.Delete(file)
 		}
+		
+		DebugLog( "use pack: " . package.filename )
 	}
 }
 
@@ -154,12 +181,46 @@ if (files_download.Length()>=200 || pack_size>=20*1024*1024) {
 
 GuiControl,, status, 正在开始下载...
 
+; 关闭残留的aria2c，并重新运行
+Process, Close, aria2c.exe
+Run, aria2c.exe --conf-path=aria2.conf,, Hide UseErrorLevel, aria2cPID
+if (A_OSVersion=="WIN_XP")
+{
+	Sleep, 1000
+	Process, Exist, aria2c.exe
+	if (ErrorLevel<>aria2cPID)
+	{
+		MsgBox, 17, % WinTitle, 您的XP操作系统早已在两年前被淘汰了，无法正常使用新特性！`n`n按确定关闭程序，或者按取消强行使用旧版。
+		IfMsgBox, OK
+		{
+			run, http://windows.microsoft.com/zh-CN/windows/end-support-help
+			gosub, ExitSub
+		}
+		else
+		{
+			run, http://windows.microsoft.com/zh-CN/windows/end-support-help
+			GuiControl,, status, 正在下载旧版aria2...
+			URLDownloadToFile, % newconfig.download_base . "xp/aria2c.7z", aria2c.7z
+			RunWait, 7zg.exe x aria2c.7z
+			Run, aria2c.exe --conf-path=aria2.conf,, Hide UseErrorLevel, aria2cPID
+			GuiControl,, status, 正在开始下载...
+		}
+	}
+}
+if (ErrorLevel=="ERROR")
+{
+	MsgBox, 16, % WinTitle, aria2下载引擎启动失败！
+	DebugLog( "fail to run aria2c!" )
+	gosub, ExitSub
+}
+
 download_count:=0
 
 for each, filename in packages_download
 {
 	url := newconfig.download_base . "update/" . filename
 	ret := aria2.addUri( [url] , {dir: "downloads\packages"})
+	DebugLog( "aria2 addUri: " . url . " " . JSON.Dump(ret) )
 	download_count++
 }
 
@@ -168,6 +229,7 @@ for each, filename in files_download
 	SplitPath, filename,, filedir
 	url := newconfig.download_base . "ygopro/" . StrReplace(filename, "\", "/")
 	ret := aria2.addUri( [url] , {dir: "downloads\" . filedir})
+	DebugLog( "aria2 addUri: " . url . " " . JSON.Dump(ret) )
 	download_count++
 }
 
@@ -187,6 +249,7 @@ if (ret.result.numStoppedTotal<download_count)
 else
 {
 	ret := aria2.shutdown()
+	DebugLog( "aria2 shutdown: " . JSON.Dump(ret) )
 	gosub, InstallUpdate
 }
 return
@@ -199,29 +262,46 @@ GuiControl,, status, 正在安装更新...
 
 Loop, Files, downloads\packages\*.7z
 {
-	RunWait, % "7zg.exe -aoa x """ . A_LoopFileLongPath . """", ..
+	RunWait, % "7zg.exe -aoa x """ . A_LoopFileLongPath . """", .., UseErrorLevel
+	DebugLog( "extract: " . ErrorLevel . " " . A_LoopFileLongPath )
+	if (ErrorLevel<>0)
+	{
+		MsgBox, 48, % WinTitle, %A_LoopFileName%解压失败，请重新尝试更新！
+		ErrorCount++
+	}
 }
 
 for each, filename in files_download
 {
 	FileMove, downloads\%filename%, ..\%filename%, 1
+	DebugLog( "filemove: " . ErrorLevel . " " . filename )
 }
 
 if (localconfig.ygopro_exe != "ygopro.exe")
 {
 	FileCopy, ..\ygopro.exe, % "..\" . localconfig.ygopro_exe, 1
+	DebugLog( "copy ygopro.exe: " . ErrorLevel . " " . localconfig.ygopro_exe )
 }
 
-GuiControl,, status, 更新完成！
+if (ErrorCount)
+{
+	GuiControl,, status, 更新过程中出现问题，请重新尝试更新！
+	
+	Sleep, 2000
+	gosub, ExitSub
+}
+else
+{
+	GuiControl,, status, 更新完成！
 
-localconfig.version:=newconfig.version
-newlocalconfig:=JSON.Dump(localconfig)
-FileDelete, config.json
-FileAppend, % newlocalconfig, *config.json
+	localconfig.version:=newconfig.version
+	newlocalconfig:=JSON.Dump(localconfig)
+	FileDelete, config.json
+	FileAppend, % newlocalconfig, *config.json
 
-Sleep, 500
-gosub, ExitSub
-
+	Sleep, 500
+	gosub, ExitSub
+}
 return
 
 ;-----------------------------------------------------------
@@ -236,23 +316,19 @@ FileDelete, packages.json
 ;FileDelete, download.json
 FileRemoveDir, downloads, 1
 Process, Close, % aria2cPID
+DebugLog( "exit" )
 ExitApp
 return
 
 ;-----------------------------------------------------------
 ; 函数
 ;-----------------------------------------------------------
-; 将字节转换为KB/MB等
-FormatByteSize(Bytes){ ; by HotKeyIt, http://ahkscript.org/boards/viewtopic.php?p=18338#p18338
-  static size:="B,KB,MB,GB,TB,PB,EB,ZB,YB"
-  Loop,Parse,size,`,
-    If (bytes>999)
-      bytes:=bytes/1024
-    else {
-      bytes:=Trim(SubStr(bytes,1,4),".") " " A_LoopField
-      break
-    }
-  return bytes
+
+; 记录日志
+DebugLog(txt)
+{
+	txt := "[" . A_Now . "] update.ahk v" . Version . " : " . txt . "`n"
+	FileAppend, % txt, update.log
 }
 
 ; 检查某个文件的MD5
@@ -265,8 +341,26 @@ CheckFile(relPath, newHash)
 	StringLower, fileHash, fileHash
 	if (fileHash <> newHash)
 	{
+		if (relPath==localconfig.ygopro_exe)
+		{
+			relPath:="ygopro.exe"
+		}
 		files_download[relPath]:=relPath
+		DebugLog( "file diff: " . relPath )
 	}
+}
+
+; 将字节转换为KB/MB等
+FormatByteSize(Bytes){ ; by HotKeyIt, http://ahkscript.org/boards/viewtopic.php?p=18338#p18338
+  static size:="B,KB,MB,GB,TB,PB,EB,ZB,YB"
+  Loop,Parse,size,`,
+    If (bytes>999)
+      bytes:=bytes/1024
+    else {
+      bytes:=Trim(SubStr(bytes,1,4),".") " " A_LoopField
+      break
+    }
+  return bytes
 }
 
 ; MD5
