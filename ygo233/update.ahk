@@ -37,6 +37,7 @@ FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
+FileDelete, aria2c.7z
 FileRemoveDir, downloads, 1
 
 ; 建立GUI
@@ -110,7 +111,7 @@ Gui, Show, w300 h25, % WinTitle
 
 ; 下载文件列表和更新包列表并解压，获得files.json和packages.json
 URLDownloadToFile, % newconfig.download_base . "update/data.7z", data.7z
-RunWait, 7zg.exe x data.7z,, Hide
+RunWait, 7zg.exe -aoa x data.7z,, Hide
 
 ; 对比MD5效验文件
 GuiControl,, status, 正在效验文件，请稍候...
@@ -201,7 +202,7 @@ if (A_OSVersion=="WIN_XP")
 			run, http://windows.microsoft.com/zh-CN/windows/end-support-help
 			GuiControl,, status, 正在下载旧版aria2...
 			URLDownloadToFile, % newconfig.download_base . "xp/aria2c.7z", aria2c.7z
-			RunWait, 7zg.exe x aria2c.7z
+			RunWait, 7zg.exe -aoa x aria2c.7z
 			Run, aria2c.exe --conf-path=aria2.conf,, Hide UseErrorLevel, aria2cPID
 			GuiControl,, status, 正在开始下载...
 		}
@@ -313,7 +314,7 @@ FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
-;FileDelete, download.json
+FileDelete, aria2c.7z
 FileRemoveDir, downloads, 1
 Process, Close, % aria2cPID
 DebugLog( "exit" )
