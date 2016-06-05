@@ -261,6 +261,22 @@ return
 InstallUpdate:
 GuiControl,, status, 正在安装更新...
 
+Process, Exist, % localconfig.ygopro_exe
+PID1:=ErrorLevel
+Process, Exist, ygopro.exe
+PID2:=ErrorLevel
+
+if (PID1 || PID2)
+{
+	MsgBox, 52, % WinTitle, 检查到YGOPRO正在运行。`n安装更新前请关闭YGOPRO。`n`n是否自动关闭？
+	IfMsgBox, Yes
+	{
+		GroupAdd, YGOPRO, ahk_exe ygopro.exe
+		GroupAdd, YGOPRO, % "ahk_exe" . localconfig.ygopro_exe
+		WinClose, ahk_group YGOPRO
+	}
+}
+
 Loop, Files, downloads\packages\*.7z
 {
 	RunWait, % "7zg.exe -aoa x """ . A_LoopFileLongPath . """", .., UseErrorLevel
