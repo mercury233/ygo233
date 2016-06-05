@@ -1,37 +1,55 @@
-﻿#NoTrayIcon
+﻿;-----------------------------------------------------------
+; Updater for ygo233
+; LICENSE: AGPL
+; https://github.com/mercury233/ygo233
+;-----------------------------------------------------------
+
+;-----------------------------------------------------------
+; 基本设置
+;-----------------------------------------------------------
+#NoTrayIcon
 #NoEnv
 #Include <aria2> ;https://autohotkey.com/boards/viewtopic.php?t=4506
 #Include <JSON> ;https://github.com/cocobelgica/AutoHotkey-JSON
-;#Include <Z_Down> ;https://autohotkey.com/boards/viewtopic.php?t=3299
 SetWorkingDir, %A_ScriptDir%
 SetBatchLines, -1
 SetControlDelay, -1
 FileEncoding, UTF-8-RAW
 OnExit, ExitSub
 
+;-----------------------------------------------------------
+; 初始化
+;-----------------------------------------------------------
+; 删除临时文件
 FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
-;FileDelete, download.json
 FileRemoveDir, downloads, 1
 
+; 关闭残留的aria2c，并重新运行
 Process, Close, aria2c.exe
 run, aria2c.exe --conf-path=aria2.conf,, hide, aria2cPID
 
+; 建立GUI
 Gui, Add, Text, x6 y6 w290 vstatus, 喵喵喵
 Gui, -SysMenu
 
 WinTitle=YGOPRO 233服 自动更新
 
+; 读取本地配置文件
 FileRead, localconfig, config.json
 localconfig:=JSON.Load(localconfig)
 
 aria2.url := "http://localhost:" . localconfig.aria2_port . "/jsonrpc"
 aria2.token := "ygo233"
 
+;-----------------------------------------------------------
+; 开始检查更新
+;-----------------------------------------------------------
 ToolTip, 正在检查更新...
 
+; 从配置文件里定义的更新URL读取版本信息
 URLDownloadToFile, % localconfig.update_url, version.json
 FileRead, newconfig, version.json
 newconfig:=JSON.Load(newconfig)
@@ -58,23 +76,28 @@ else
 
 return
 
+;-----------------------------------------------------------
+; 开始更新
+;-----------------------------------------------------------
 StartUpdate:
 GuiControl,, status, 正在获取更新信息...
 Gui, Show, w300 h25, % WinTitle
 
+; 下载文件列表和更新包列表并解压，获得files.json和packages.json
 URLDownloadToFile, % newconfig.download_base . "update/data.7z", data.7z
-
 RunWait, 7zg.exe x data.7z,, Hide
 
+; 对比MD5效验文件
 GuiControl,, status, 正在效验文件，请稍候...
 
-files_download := {}
-packages_download := []
+files_download := {} ; 需要下载的文件列表
+packages_download := [] ; 需要下载的更新列表
 pack_size := 0
 
 FileRead, files_json, files.json
 files_json:=JSON.load(files_json)
 
+; CheckFile会把发现的不同文件记录到files_download
 CheckFile(localconfig.ygopro_exe, files_json.ygopro_exe)
 
 for i, file in files_json.files
@@ -90,6 +113,10 @@ for folder, folder_files in files_json.folders
 	}
 }
 
+; 检查每个更新包里存在多少个需要下载的文件
+; 如果需要下载的文件数量大于三分之二，或者大于100，记录这个更新包为可用
+; 并把这个更新包里的所有文件从需要下载文件列表里移除
+; 得出需要下载更新包列表，和剩余的需要下载文件列表
 FileRead, packages_json, packages.json
 packages_json:=JSON.load(packages_json)
 
@@ -114,6 +141,7 @@ for i, package in packages_json.packages
 	}
 }
 
+; 开始下载
 if (files_download.Length()>=200 || pack_size>=20*1024*1024) {
 	Gui, +OwnDialogs
 	MsgBox, 49, % WinTitle, 您需要更新的文件过多，请重新下载完整版！`n`n按确定打开YGOPRO 233服官网下载页面。
@@ -146,6 +174,9 @@ for each, filename in files_download
 gosub, UpdateStatus
 return
 
+;-----------------------------------------------------------
+; 更新进度
+;-----------------------------------------------------------
 UpdateStatus:
 ret := aria2.getGlobalStat()
 if (ret.result.numStoppedTotal<download_count)
@@ -160,6 +191,9 @@ else
 }
 return
 
+;-----------------------------------------------------------
+; 安装更新
+;-----------------------------------------------------------
 InstallUpdate:
 GuiControl,, status, 正在安装更新...
 
@@ -190,6 +224,9 @@ gosub, ExitSub
 
 return
 
+;-----------------------------------------------------------
+; 退出
+;-----------------------------------------------------------
 GuiClose:
 ExitSub:
 FileDelete, version.json
@@ -202,9 +239,12 @@ Process, Close, % aria2cPID
 ExitApp
 return
 
-;--------------------------------------------
+;-----------------------------------------------------------
+; 函数
+;-----------------------------------------------------------
+; 将字节转换为KB/MB等
 FormatByteSize(Bytes){ ; by HotKeyIt, http://ahkscript.org/boards/viewtopic.php?p=18338#p18338
-  static size:="b,KB,MB,GB,TB,PB,EB,ZB,YB"
+  static size:="B,KB,MB,GB,TB,PB,EB,ZB,YB"
   Loop,Parse,size,`,
     If (bytes>999)
       bytes:=bytes/1024
@@ -215,6 +255,7 @@ FormatByteSize(Bytes){ ; by HotKeyIt, http://ahkscript.org/boards/viewtopic.php?
   return bytes
 }
 
+; 检查某个文件的MD5
 CheckFile(relPath, newHash)
 {
 	global
@@ -228,6 +269,7 @@ CheckFile(relPath, newHash)
 	}
 }
 
+; MD5
 HashFile(filePath, hashType=2) ; By Deo, http://www.autohotkey.com/forum/viewtopic.php?t=71133
 {
    PROV_RSA_AES := 24
