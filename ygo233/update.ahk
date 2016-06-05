@@ -37,6 +37,8 @@ FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
+FileDelete, ygo233.json
+FileDelete, update.bak
 FileRemoveDir, downloads, 1
 
 ; 建立GUI
@@ -74,6 +76,24 @@ FileRead, newconfig, version.json
 newconfig:=JSON.Load(newconfig)
 
 DebugLog( "newconfig.version: " . newconfig.version )
+
+if (localconfig.ygo233_version!=newconfig.ygo233_version)
+{
+	ToolTip
+	Process, Close, 启动游戏.exe
+	GuiControl,, status, 正在更新YGOPRO 233服 客户端...
+	Gui, Show, w300 h25, % WinTitle
+	URLDownloadToFile, % newconfig.download_base . "update/ygo233_update.7z", ygo233_update.7z
+	FileMove, update.exe, update.bak, 1
+	RunWait, 7zg.exe -aoa x ygo233\ygo233_update.7z, ..
+	FileDelete, ygo233_update.7z
+	localconfig.ygo233_version:=newconfig.ygo233_version
+	newlocalconfig:=JSON.Dump(localconfig)
+	FileDelete, config.json
+	FileAppend, % newlocalconfig, *config.json
+	Run, ..\启动游戏.exe
+	gosub, ExitSub
+}
 
 if (localconfig.version!=newconfig.version && BackgroundCheckMode)
 {
@@ -330,6 +350,7 @@ FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
 FileDelete, packages.json
+FileDelete, ygo233.json
 FileRemoveDir, downloads, 1
 Process, Close, % aria2cPID
 DebugLog( "exit" )

@@ -22,6 +22,8 @@ system.conf
 ygopro.exe
 ygopro_vs.exe
 
+version.json
+
 启动游戏.exe
 launcher.ahk.ini
 

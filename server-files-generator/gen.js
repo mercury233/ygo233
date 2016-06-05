@@ -60,6 +60,20 @@ for (var i in ygopro_files.folders) {
 
 fs.writeFileSync(config.server_path+"files.json", JSON.stringify(files_json));
 
+var ygo233_json = {};
+
+ygo233_json.files=[];
+
+for (var i in ygopro_files.ygo233_files) {
+  var file = ygopro_files.ygo233_files[i];
+  var item = {};
+  item.name = file;
+  item.hash = hash(file);
+  ygo233_json.files.push(item);
+}
+
+fs.writeFileSync(config.server_path+"ygo233.json", JSON.stringify(ygo233_json));
+
 var packages_json={};
 var packages_array=[];
 
@@ -80,6 +94,16 @@ db_item.filecount=1;
 db_item.filesize=fs.statSync(config.base_path+"db.7z").size;
 db_item.files=["cards.cdb"];
 packages_array.push(db_item);
+
+var ygo233_7z_arg=["a", "ygo233_update.7z"].concat(ygopro_files.ygo233_files);
+spawnSync(config.sevenzip_exe, ygo233_7z_arg, { cwd: config.base_path, env: process.env });
+var ygo233_item={};
+ygo233_item.name="YGO233 客户端更新";
+ygo233_item.filename="ygo233_update.7z";
+ygo233_item.filecount=1;
+ygo233_item.filesize=fs.statSync(config.base_path+"ygo233_update.7z").size;
+ygo233_item.files=ygopro_files.ygo233_files;
+packages_array.push(ygo233_item);
 
 var packages = fs.readdirSync(config.packages_path);
 for (var i = packages.length-1; i >= 0; i--) {

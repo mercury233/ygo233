@@ -9,5 +9,9 @@
     "pics",
     "pics\\thumbnail",
     "pics\\field"
+  ],
+  "ygo233_files": [
+    "启动游戏.exe",
+    "ygo233\\update.exe"
   ]
 }
