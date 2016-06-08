@@ -27,7 +27,7 @@ if 0 >= 1
 	}
 }
 ErrorCount:=0
-Version:="0.0.2"
+Version:="0.0.3"
 
 ;-----------------------------------------------------------
 ; 初始化
@@ -138,6 +138,7 @@ GuiControl,, status, 正在效验文件，请稍候...
 files_download := {} ; 需要下载的文件列表
 packages_download := [] ; 需要下载的更新列表
 pack_size := 0
+file_count := 0
 
 FileRead, files_json, files.json
 files_json:=JSON.load(files_json)
@@ -189,7 +190,13 @@ for i, package in packages_json.packages
 }
 
 ; 开始下载
-if (files_download.Length()>=200 || pack_size>=20*1024*1024) {
+
+for each, file in files_download
+{
+	file_count++
+}
+
+if (file_count>=200 || pack_size>=20*1024*1024) {
 	Gui, +OwnDialogs
 	MsgBox, 49, % WinTitle, 您需要更新的文件过多，请重新下载完整版！`n`n按确定打开YGOPRO 233服官网下载页面。
 	IfMsgBox, OK
@@ -299,6 +306,7 @@ if (PID1 || PID2)
 
 Loop, Files, downloads\packages\*.7z
 {
+	GuiControl,, status, 正在安装更新%A_LoopFileName%...
 	RunWait, % "7zg.exe -aoa x """ . A_LoopFileLongPath . """", .., UseErrorLevel
 	DebugLog( "extract: " . ErrorLevel . " " . A_LoopFileLongPath )
 	if (ErrorLevel<>0)
@@ -310,14 +318,23 @@ Loop, Files, downloads\packages\*.7z
 
 for each, filename in files_download
 {
+	GuiControl,, status, 正在更新%filename%...
 	FileMove, downloads\%filename%, ..\%filename%, 1
 	DebugLog( "filemove: " . ErrorLevel . " " . filename )
+	if (ErrorLevel<>0)
+	{
+		ErrorCount++
+	}
 }
 
 if (localconfig.ygopro_exe != "ygopro.exe")
 {
 	FileCopy, ..\ygopro.exe, % "..\" . localconfig.ygopro_exe, 1
 	DebugLog( "copy ygopro.exe: " . ErrorLevel . " " . localconfig.ygopro_exe )
+	if (ErrorLevel<>0)
+	{
+		ErrorCount++
+	}
 }
 
 if (ErrorCount)
@@ -364,6 +381,7 @@ return
 ; 记录日志
 DebugLog(txt)
 {
+	global
 	txt := "[" . A_Now . "] update.ahk v" . Version . " : " . txt . "`n"
 	FileAppend, % txt, update.log
 }
