@@ -10,6 +10,13 @@
     "pics\\thumbnail",
     "pics\\field"
   ],
+  "pre_files": [
+    "expansions\\pre-release.cdb"
+  ],
+  "pre_folders": [
+    "pics",
+    "pics\\thumbnail"
+  ],
   "ygo233_files": [
     "启动游戏.exe",
     "ygo233\\update.exe"
