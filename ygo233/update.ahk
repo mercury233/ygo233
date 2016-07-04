@@ -190,7 +190,7 @@ if (!OnlyPreMode)
 
 	for i, file in files_json.files
 	{
-		if (CheckFile(file.name, file.size, file.hash))
+		if (CheckFile(file.name, 0, file.hash))
 		{
 			files_download[file.name]:=file.name
 		}
@@ -225,7 +225,7 @@ if (localconfig.use_pre_release=="true")
 
 	for i, file in pre_json.files
 	{
-		if (CheckFile(file.name, file.size, file.hash))
+		if (CheckFile(file.name, 0, file.hash))
 		{
 			files_download[file.name]:=file.name
 		}
