@@ -16,7 +16,7 @@ SetWorkingDir, %A_ScriptDir%
 SetBatchLines, -1
 SetControlDelay, -1
 FileEncoding, UTF-8-RAW
-OnExit, ExitSub
+;OnExit, ExitSub
 
 if 0 >= 1
 {
@@ -25,9 +25,17 @@ if 0 >= 1
 	{
 		BackgroundCheckMode:=1
 	}
+	if (param1=="Pre")
+	{
+		OnlyPreMode:=1
+	}
+	if (param1=="Full")
+	{
+		FullCheckMode:=1
+	}
 }
 ErrorCount:=0
-Version:="0.0.3"
+Version:="0.0.4"
 
 ;-----------------------------------------------------------
 ; 初始化
@@ -36,6 +44,7 @@ Version:="0.0.3"
 FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
+FileDelete, pre.json
 FileDelete, packages.json
 FileDelete, ygo233.json
 FileDelete, update.bak
@@ -45,7 +54,7 @@ FileRemoveDir, downloads, 1
 Gui, Add, Text, x6 y6 w290 vstatus, 喵喵喵
 Gui, -SysMenu
 
-WinTitle=YGOPRO 233服 自动更新
+WinTitle=YGO233 自动更新
 
 ; 读取本地配置文件
 FileRead, localconfig, config.json
@@ -62,7 +71,7 @@ DebugLog( "aria2.url: " . aria2.url )
 
 if (BackgroundCheckMode)
 {
-	ToolTip, 正在检查更新...
+	;ToolTip, 正在检查更新...
 }
 else
 {
@@ -72,6 +81,12 @@ else
 
 ; 从配置文件里定义的更新URL读取版本信息
 URLDownloadToFile, % localconfig.update_url, version.json
+if (ErrorLevel)
+{
+	Gui, +OwnDialogs
+	MsgBox, 16, % WinTitle, 检查更新失败！
+	gosub, ExitSub
+}
 FileRead, newconfig, version.json
 newconfig:=JSON.Load(newconfig)
 
@@ -84,6 +99,12 @@ if (localconfig.ygo233_version!=newconfig.ygo233_version)
 	GuiControl,, status, 正在更新YGOPRO 233服 客户端...
 	Gui, Show, w300 h25, % WinTitle
 	URLDownloadToFile, % newconfig.download_base . "update/ygo233_update.7z", ygo233_update.7z
+	if (ErrorLevel)
+	{
+		Gui, +OwnDialogs
+		MsgBox, 16, % WinTitle, 自动更新失败！
+		gosub, ExitSub
+	}
 	FileMove, update.exe, update.bak, 1
 	RunWait, 7zg.exe -aoa x ygo233\ygo233_update.7z, ..
 	FileDelete, ygo233_update.7z
@@ -97,8 +118,21 @@ if (localconfig.ygo233_version!=newconfig.ygo233_version)
 
 if (localconfig.version!=newconfig.version && BackgroundCheckMode)
 {
-	ToolTip
-	MsgBox, 36, % WinTitle, % "发现新版本，是否更新？`n`n发布日期：" newconfig.date "`n`n更新内容：" newconfig.txt
+	;ToolTip
+	MsgBox, 36, % WinTitle, % "发现新版本，是否更新？`n`n发布日期：" newconfig.date "`n`n更新内容：`n" newconfig.txt
+	IfMsgBox, Yes
+	{
+		gosub, StartUpdate
+	}
+	else
+	{
+		gosub, ExitSub
+	}
+}
+else if (localconfig.use_pre_release=="true" && localconfig.pre_version!=newconfig.pre_version && BackgroundCheckMode)
+{
+	;ToolTip
+	MsgBox, 36, % WinTitle, % "发现先行卡新版本，是否更新？`n`n发布日期：" newconfig.pre_date "`n`n更新内容：`n" newconfig.pre_txt
 	IfMsgBox, Yes
 	{
 		gosub, StartUpdate
@@ -110,8 +144,6 @@ if (localconfig.version!=newconfig.version && BackgroundCheckMode)
 }
 else if (BackgroundCheckMode)
 {
-	ToolTip, 没有发现新版本
-	Sleep, 2000
 	gosub, ExitSub
 }
 else
@@ -130,6 +162,12 @@ Gui, Show, w300 h25, % WinTitle
 
 ; 下载文件列表和更新包列表并解压，获得files.json和packages.json
 URLDownloadToFile, % newconfig.download_base . "update/data.7z", data.7z
+if (ErrorLevel)
+{
+	Gui, +OwnDialogs
+	MsgBox, 16, % WinTitle, 获取更新信息失败！
+	gosub, ExitSub
+}
 RunWait, 7zg.exe -aoa x data.7z,, Hide
 
 ; 对比MD5效验文件
@@ -140,22 +178,69 @@ packages_download := [] ; 需要下载的更新列表
 pack_size := 0
 file_count := 0
 
-FileRead, files_json, files.json
-files_json:=JSON.load(files_json)
-
-; CheckFile会把发现的不同文件记录到files_download
-CheckFile(localconfig.ygopro_exe, files_json.ygopro_exe)
-
-for i, file in files_json.files
+if (!OnlyPreMode)
 {
-	CheckFile(file.name, file.hash)
+	FileRead, files_json, files.json
+	files_json:=JSON.Load(files_json)
+
+	if (CheckFile(localconfig.ygopro_exe, 0, files_json.ygopro_exe))
+	{
+		files_download["ygopro.exe"]:="ygopro.exe"
+	}
+
+	for i, file in files_json.files
+	{
+		if (CheckFile(file.name, file.size, file.hash))
+		{
+			files_download[file.name]:=file.name
+		}
+	}
+
+	for folder, folder_files in files_json.folders
+	{
+		if (!FullCheckMode && folder == "pics\thumbnail")
+		{
+			continue
+		}
+		for j, file in folder_files
+		{
+			filename := folder . "\" . file.name
+			if (CheckFile(filename, file.size, file.hash))
+			{
+				files_download[filename]:=filename
+				if (!FullCheckMode && folder == "pics")
+				{
+					filename := "pics\thumbnail" . "\" . file.name
+					files_download[filename]:=filename
+				}
+			}
+		}
+	}
 }
 
-for folder, folder_files in files_json.folders
+if (localconfig.use_pre_release=="true")
 {
-	for j, file in folder_files
+	FileRead, pre_json, pre.json
+	pre_json:=JSON.Load(pre_json)
+
+	for i, file in pre_json.files
 	{
-		CheckFile(folder . "\" . file.name, file.hash)
+		if (CheckFile(file.name, file.size, file.hash))
+		{
+			files_download[file.name]:=file.name
+		}
+	}
+
+	for folder, folder_files in pre_json.folders
+	{
+		for j, file in folder_files
+		{
+			filename := folder . "\" . file.name
+			if (CheckFile(filename, file.size, file.hash))
+			{
+				files_download[filename]:=filename
+			}
+		}
 	}
 }
 
@@ -164,7 +249,7 @@ for folder, folder_files in files_json.folders
 ; 并把这个更新包里的所有文件从需要下载文件列表里移除
 ; 得出需要下载更新包列表，和剩余的需要下载文件列表
 FileRead, packages_json, packages.json
-packages_json:=JSON.load(packages_json)
+packages_json:=JSON.Load(packages_json)
 
 for i, package in packages_json.packages
 {
@@ -180,6 +265,7 @@ for i, package in packages_json.packages
 	{
 		packages_download.push(package.filename)
 		pack_size += package.filesize
+		file_count++
 		for j, file in package.files
 		{
 			files_download.Delete(file)
@@ -194,6 +280,15 @@ for i, package in packages_json.packages
 for each, file in files_download
 {
 	file_count++
+	DebugLog( "download file: " . file )
+}
+
+if (file_count==0)
+{
+	GuiControl,, status, 已是最新版本！
+	gosub, SaveConfig
+	Sleep, 500
+	gosub, ExitSub
 }
 
 if (file_count>=200 || pack_size>=20*1024*1024) {
@@ -228,6 +323,12 @@ if (A_OSVersion=="WIN_XP")
 			run, http://windows.microsoft.com/zh-CN/windows/end-support-help
 			GuiControl,, status, 正在下载旧版aria2...
 			URLDownloadToFile, % newconfig.download_base . "xp/aria2c.7z", aria2c.7z
+			if (ErrorLevel)
+			{
+				Gui, +OwnDialogs
+				MsgBox, 16, % WinTitle, 下载aria2失败！
+				gosub, ExitSub
+			}
 			RunWait, 7zg.exe -aoa x aria2c.7z
 			FileDelete, aria2c.7z
 			Run, aria2c.exe --conf-path=aria2.conf,, Hide UseErrorLevel, aria2cPID
@@ -347,15 +448,27 @@ if (ErrorCount)
 else
 {
 	GuiControl,, status, 更新完成！
-
-	localconfig.version:=newconfig.version
-	newlocalconfig:=JSON.Dump(localconfig)
-	FileDelete, config.json
-	FileAppend, % newlocalconfig, *config.json
-
+	gosub, SaveConfig
 	Sleep, 500
 	gosub, ExitSub
 }
+return
+
+;-----------------------------------------------------------
+; 保存配置
+;-----------------------------------------------------------
+SaveConfig:
+if (!OnlyPreMode)
+{
+	localconfig.version:=newconfig.version
+}
+if (localconfig.use_pre_release=="true")
+{
+	localconfig.pre_version:=newconfig.pre_version
+}
+newlocalconfig:=JSON.Dump(localconfig)
+FileDelete, config.json
+FileAppend, % newlocalconfig, *config.json
 return
 
 ;-----------------------------------------------------------
@@ -366,10 +479,16 @@ ExitSub:
 FileDelete, version.json
 FileDelete, data.7z
 FileDelete, files.json
+FileDelete, pre.json
 FileDelete, packages.json
 FileDelete, ygo233.json
 FileRemoveDir, downloads, 1
 Process, Close, % aria2cPID
+WinGet, sn, ID, ahk_exe 启动游戏.exe
+if (sn)
+{
+	PostMessage, 0x2333,,,, ahk_id %sn%
+}
 DebugLog( "exit" )
 ExitApp
 return
@@ -382,27 +501,39 @@ return
 DebugLog(txt)
 {
 	global
+	StringReplace, txt, txt, `r, , All
+	StringReplace, txt, txt, `n, , All
 	txt := "[" . A_Now . "] update.ahk v" . Version . " : " . txt . "`n"
 	FileAppend, % txt, update.log
 }
 
 ; 检查某个文件的MD5
-CheckFile(relPath, newHash)
+CheckFile(relPath, newSize, newHash)
 {
 	global
-	GuiControl,, status, 正在效验文件%relPath%...
-	fileHash := HashFile(localconfig.base_path . relPath)
-	StringLeft, fileHash, fileHash, 8
-	StringLower, fileHash, fileHash
-	if (fileHash <> newHash)
+	;GuiControl,, status, 正在效验文件%relPath%...
+	if (!FullCheckMode && newSize)
 	{
-		if (relPath==localconfig.ygopro_exe)
+		GuiControl,, status, 正在快速效验文件%relPath%...
+		FileGetSize, fileSize, % localconfig.base_path . relPath
+		if (fileSize == newSize)
 		{
-			relPath:="ygopro.exe"
+			return 0
 		}
-		files_download[relPath]:=relPath
-		DebugLog( "file diff: " . relPath )
 	}
+	else
+	{
+		GuiControl,, status, 正在效验文件%relPath%...
+		fileHash := HashFile(localconfig.base_path . relPath)
+		StringLeft, fileHash, fileHash, 8
+		StringLower, fileHash, fileHash
+		if (fileHash == newHash)
+		{
+			return 0
+		}
+	}
+	;DebugLog( "file diff: " . relPath )
+	return 1
 }
 
 ; 将字节转换为KB/MB等

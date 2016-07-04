@@ -1,1 +1,13 @@
-{"aria2_port":"6888","base_path":"../","update_url":"http://mercury233.me/ygosrv233/version.json","version":"0","ygo233_version":"0","ygopro_exe":"ygopro.exe"}
+{
+"aria2_port":"6888",
+"auto_close_ygo233":"false",
+"auto_run_ygopro":"false",
+"base_path":"../",
+"dont_auto_update":"false",
+"pre_version":"0",
+"update_url":"http://mercury233.me/ygosrv233/version.json",
+"use_pre_release":"false",
+"version":"0",
+"ygo233_version":"0",
+"ygopro_exe":"ygopro.exe"
+}
