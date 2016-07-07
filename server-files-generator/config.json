@@ -9,5 +9,6 @@
   "base_path": "F:\\Works\\ygopro-client\\",
   "pre_path": "F:\\Works\\ygopro-unofficial\\unofficial\\",
   "server_path": "F:\\Works\\ygo233\\server\\",
-  "packages_path": "../pic-pack/"
+  "packages_path": "../pic-pack/",
+  "pre_packages_path": "../pre-pack/"
 }
