@@ -35,7 +35,7 @@ if 0 >= 1
 	}
 }
 ErrorCount:=0
-Version:="0.0.4"
+Version:="0.0.5"
 
 ;-----------------------------------------------------------
 ; 初始化
@@ -408,7 +408,14 @@ if (PID1 || PID2)
 Loop, Files, downloads\packages\*.7z
 {
 	GuiControl,, status, 正在安装更新%A_LoopFileName%...
-	RunWait, % "7zg.exe -aoa x """ . A_LoopFileLongPath . """", .., UseErrorLevel
+	Overwrite := "-aoa"
+	/*
+	if (localconfig.skip_exist_file=="true")
+	{
+		Overwrite := "-aos"
+	}
+	*/
+	RunWait, % "7zg.exe " . Overwrite . " x """ . A_LoopFileLongPath . """", .., UseErrorLevel
 	DebugLog( "extract: " . ErrorLevel . " " . A_LoopFileLongPath )
 	if (ErrorLevel<>0)
 	{
@@ -511,7 +518,11 @@ DebugLog(txt)
 CheckFile(relPath, newSize, newHash)
 {
 	global
-	;GuiControl,, status, 正在效验文件%relPath%...
+	if (localconfig.skip_exist_file=="true" && SubStr(relPath, -3) == ".jpg" && FileExist(localconfig.base_path . relPath))
+	{
+		GuiControl,, status, 正在跳过文件%relPath%...
+		return 0
+	}
 	if (!FullCheckMode && newSize)
 	{
 		GuiControl,, status, 正在快速效验文件%relPath%...

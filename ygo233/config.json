@@ -5,6 +5,7 @@
 "base_path":"../",
 "dont_auto_update":"false",
 "pre_version":"0",
+"skip_exist_file":"false",
 "update_url":"http://mercury233.me/ygosrv233/version.json",
 "use_pre_release":"false",
 "version":"0",

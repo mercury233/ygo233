@@ -12,7 +12,7 @@ Else
 Menu, Tray, Icon, ygo233\Tyr.ico
 
 WinTitle=YGO233
-Version:="0.0.4"
+Version:="0.0.5"
 
 
 FileRead, localconfig, ygo233\config.json
@@ -116,13 +116,14 @@ Gui 2: Default
 Gui, +Owner1
 ;Gui, 1:+Disabled
 
-Gui, Add, GroupBox, x10 y10 w220 h100, 设置
+Gui, Add, GroupBox, x10 y10 w220 h125, 设置
 
 Gui, Add, CheckBox, xp+10 yp+20 w200 h20 -Wrap vGUI_Set_Dont_Auto_Update gGUI_Set_Dont_Auto_Update_Click, 不自动检查更新
+Gui, Add, CheckBox, xp+0 yp+25 w200 h20 -Wrap vGUI_Set_Skip_Exist_File gGUI_Set_Skip_Exist_File_Click, 只下载新卡的卡图
 Gui, Add, CheckBox, xp+0 yp+25 w200 h20 -Wrap vGUI_Set_Auto_Run_YGOPRO gGUI_Set_Auto_Run_YGOPRO_Click, 自动启动游戏
 Gui, Add, CheckBox, xp+0 yp+25 w200 h20 -Wrap vGUI_Set_Auto_Close_YGO233 gGUI_Set_Auto_Close_YGO233_Click, 启动游戏后关闭启动器
 
-Gui, Add, GroupBox, x10 y120 w220 h265, 功能(更多功能会在以后的版本开放)
+Gui, Add, GroupBox, x10 y145 w220 h265, 功能(更多功能会在以后的版本开放)
 
 Gui, Add, Button, xp+10 yp+20 w95 h25 gGUI_Set_Enable_Pre, 启用先行卡
 Gui, Add, Button, xp+105 yp+0 w95 h25 gGUI_Set_Remove_Pre, 删除先行卡
@@ -149,6 +150,10 @@ else
 if (localconfig.dont_auto_update == "true")
 {
 	GuiControl, , GUI_Set_Dont_Auto_Update, 1
+}
+if (localconfig.skip_exist_file == "true")
+{
+	GuiControl, , GUI_Set_Skip_Exist_File, 1
 }
 if (localconfig.auto_run_ygopro == "true")
 {
@@ -178,6 +183,19 @@ if (GUI_Set_Dont_Auto_Update)
 else
 {
 	localconfig.dont_auto_update:="false"
+}
+gosub, SaveConfig
+return
+
+GUI_Set_Skip_Exist_File_Click:
+Gui, Submit, NoHide
+if (GUI_Set_Skip_Exist_File)
+{
+	localconfig.skip_exist_file:="true"
+}
+else
+{
+	localconfig.skip_exist_file:="false"
 }
 gosub, SaveConfig
 return
