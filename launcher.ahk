@@ -47,6 +47,7 @@ if (localconfig.dont_auto_update <> "true")
 {
 	GuiControl, , ButtonStart, 正在检查更新...
 	GuiControl, Disable, ButtonStart
+	starting := "true"
 	Run, ygo233\update.exe Background, ygo233
 }
 else if (localconfig.auto_run_ygopro == "true")
@@ -71,8 +72,9 @@ CheckFinish()
 	global
 	GuiControl, , ButtonStart, 启动游戏
 	GuiControl, Enable, ButtonStart
-	if (localconfig.auto_run_ygopro == "true")
+	if (localconfig.auto_run_ygopro == "true" && starting == "true")
 	{
+		starting := "false"
 		gosub, RunYGOPRO
 	}
 }
@@ -136,7 +138,7 @@ Gui, Add, Button, xp+105 yp+0 w95 h25 gGUI_Set_OK Disabled, 捐助
 ;Gui, Add, Button, x155 y370 w75 h25 gGUI_Set_OK ,确定
 ;Gui, Add, Button, x235 y370 w75 h25 gGUI_Set_Apply ,应用
 
-if (localconfig.use_pre_release <> "false")
+if (localconfig.use_pre_release == "true")
 {
 	GuiControl, Disable, 启用先行卡
 }
