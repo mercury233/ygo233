@@ -165,6 +165,7 @@ var gen_packages_json = function() {
     args=args.concat(files);
 
     spawnSync(config.sevenzip_exe, args, { cwd: config.base_path, env: process.env });
+    fs.utimesSync(config.base_path+packname+".7z", NaN, pack_mtime);
     
     var item={};
     item.name="卡图包 "+packname;

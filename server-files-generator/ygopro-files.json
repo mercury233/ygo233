@@ -11,7 +11,8 @@
     "pics\\field"
   ],
   "pre_files": [
-    "expansions\\pre-release.cdb"
+    "expansions\\pre-release.cdb",
+    "expansions\\strings.conf"
   ],
   "pre_folders": [
     "pics",
