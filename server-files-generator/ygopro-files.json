@@ -12,6 +12,7 @@
   ],
   "pre_files": [
     "expansions\\pre-release.cdb",
+    "expansions\\pre-update.cdb",
     "expansions\\strings.conf"
   ],
   "pre_folders": [

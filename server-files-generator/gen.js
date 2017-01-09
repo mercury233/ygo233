@@ -226,7 +226,7 @@ var gen_pre_json = function() {
   var packages_json = require(config.server_path + "packages.json");;
   var packages_array = packages_json.packages;
 
-  spawnSync(config.sevenzip_exe, ["a", "pre.7z", "expansions\\pre-release.cdb", "deck", "script"], { cwd: config.pre_path, env: process.env });
+  spawnSync(config.sevenzip_exe, ["a", "pre.7z", "expansions", "deck", "script"], { cwd: config.pre_path, env: process.env });
   var pre_item={};
   pre_item.name="先行卡数据库";
   pre_item.filename="pre.7z";
