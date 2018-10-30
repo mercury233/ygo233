@@ -50,7 +50,7 @@
             this.labelAntiAlias = new System.Windows.Forms.Label();
             this.labelDefaultOT = new System.Windows.Forms.Label();
             this.chkResizePopupMenu = new System.Windows.Forms.CheckBox();
-            this.ChkEnableBotMode = new System.Windows.Forms.CheckBox();
+            this.chkEnableBotMode = new System.Windows.Forms.CheckBox();
             this.chkDrawField = new System.Windows.Forms.CheckBox();
             this.chkMouseControlMode = new System.Windows.Forms.CheckBox();
             this.chkErrorlogToFile = new System.Windows.Forms.CheckBox();
@@ -227,7 +227,7 @@
             this.groupBoxYGOProSettings.Controls.Add(this.labelAntiAlias);
             this.groupBoxYGOProSettings.Controls.Add(this.labelDefaultOT);
             this.groupBoxYGOProSettings.Controls.Add(this.chkResizePopupMenu);
-            this.groupBoxYGOProSettings.Controls.Add(this.ChkEnableBotMode);
+            this.groupBoxYGOProSettings.Controls.Add(this.chkEnableBotMode);
             this.groupBoxYGOProSettings.Controls.Add(this.chkDrawField);
             this.groupBoxYGOProSettings.Controls.Add(this.chkMouseControlMode);
             this.groupBoxYGOProSettings.Controls.Add(this.chkErrorlogToFile);
@@ -246,13 +246,14 @@
             this.comboAntiAlias.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAntiAlias.FormattingEnabled = true;
             this.comboAntiAlias.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3"});
+            "关",
+            "中",
+            "高"});
             this.comboAntiAlias.Location = new System.Drawing.Point(118, 231);
             this.comboAntiAlias.Name = "comboAntiAlias";
             this.comboAntiAlias.Size = new System.Drawing.Size(85, 20);
             this.comboAntiAlias.TabIndex = 13;
+            this.comboAntiAlias.SelectedIndexChanged += new System.EventHandler(this.comboAntiAlias_SelectedIndexChanged);
             // 
             // comboDefaultOT
             // 
@@ -266,6 +267,7 @@
             this.comboDefaultOT.Name = "comboDefaultOT";
             this.comboDefaultOT.Size = new System.Drawing.Size(85, 20);
             this.comboDefaultOT.TabIndex = 12;
+            this.comboDefaultOT.SelectedIndexChanged += new System.EventHandler(this.comboDefaultOT_SelectedIndexChanged);
             // 
             // labelAntiAlias
             // 
@@ -294,16 +296,18 @@
             this.chkResizePopupMenu.TabIndex = 7;
             this.chkResizePopupMenu.Text = "弹出菜单随窗口放大";
             this.chkResizePopupMenu.UseVisualStyleBackColor = true;
+            this.chkResizePopupMenu.CheckedChanged += new System.EventHandler(this.chkResizePopupMenu_CheckedChanged);
             // 
-            // ChkEnableBotMode
+            // chkEnableBotMode
             // 
-            this.ChkEnableBotMode.AutoSize = true;
-            this.ChkEnableBotMode.Location = new System.Drawing.Point(11, 158);
-            this.ChkEnableBotMode.Name = "ChkEnableBotMode";
-            this.ChkEnableBotMode.Size = new System.Drawing.Size(96, 16);
-            this.ChkEnableBotMode.TabIndex = 6;
-            this.ChkEnableBotMode.Text = "启用人机模式";
-            this.ChkEnableBotMode.UseVisualStyleBackColor = true;
+            this.chkEnableBotMode.AutoSize = true;
+            this.chkEnableBotMode.Location = new System.Drawing.Point(11, 158);
+            this.chkEnableBotMode.Name = "chkEnableBotMode";
+            this.chkEnableBotMode.Size = new System.Drawing.Size(96, 16);
+            this.chkEnableBotMode.TabIndex = 6;
+            this.chkEnableBotMode.Text = "启用人机模式";
+            this.chkEnableBotMode.UseVisualStyleBackColor = true;
+            this.chkEnableBotMode.CheckedChanged += new System.EventHandler(this.chkEnableBotMode_CheckedChanged);
             // 
             // chkDrawField
             // 
@@ -314,6 +318,7 @@
             this.chkDrawField.TabIndex = 5;
             this.chkDrawField.Text = "显示场地魔法背景";
             this.chkDrawField.UseVisualStyleBackColor = true;
+            this.chkDrawField.CheckedChanged += new System.EventHandler(this.chkDrawField_CheckedChanged);
             // 
             // chkMouseControlMode
             // 
@@ -324,6 +329,7 @@
             this.chkMouseControlMode.TabIndex = 4;
             this.chkMouseControlMode.Text = "使用鼠标控制连锁";
             this.chkMouseControlMode.UseVisualStyleBackColor = true;
+            this.chkMouseControlMode.CheckedChanged += new System.EventHandler(this.chkMouseControlMode_CheckedChanged);
             // 
             // chkErrorlogToFile
             // 
@@ -334,6 +340,7 @@
             this.chkErrorlogToFile.TabIndex = 3;
             this.chkErrorlogToFile.Text = "记录错误信息";
             this.chkErrorlogToFile.UseVisualStyleBackColor = true;
+            this.chkErrorlogToFile.CheckedChanged += new System.EventHandler(this.chkErrorlogToFile_CheckedChanged);
             // 
             // chkErrorlogToScreen
             // 
@@ -344,6 +351,7 @@
             this.chkErrorlogToScreen.TabIndex = 2;
             this.chkErrorlogToScreen.Text = "显示错误信息";
             this.chkErrorlogToScreen.UseVisualStyleBackColor = true;
+            this.chkErrorlogToScreen.CheckedChanged += new System.EventHandler(this.chkErrorlogToScreen_CheckedChanged);
             // 
             // chkImgScale
             // 
@@ -354,6 +362,7 @@
             this.chkImgScale.TabIndex = 1;
             this.chkImgScale.Text = "高画质缩放卡图";
             this.chkImgScale.UseVisualStyleBackColor = true;
+            this.chkImgScale.CheckedChanged += new System.EventHandler(this.chkImgScale_CheckedChanged);
             // 
             // chkDirect3D
             // 
@@ -364,6 +373,7 @@
             this.chkDirect3D.TabIndex = 0;
             this.chkDirect3D.Text = "使用 Direct3D 图像模式";
             this.chkDirect3D.UseVisualStyleBackColor = true;
+            this.chkDirect3D.CheckedChanged += new System.EventHandler(this.chkDirect3D_CheckedChanged);
             // 
             // tabControlYGO233Main
             // 
@@ -387,6 +397,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "frmYGO233Main";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "YGO233 设置";
             this.tabPageTools.ResumeLayout(false);
             this.groupBoxTools.ResumeLayout(false);
@@ -417,7 +428,7 @@
         private System.Windows.Forms.Label labelAntiAlias;
         private System.Windows.Forms.Label labelDefaultOT;
         private System.Windows.Forms.CheckBox chkResizePopupMenu;
-        private System.Windows.Forms.CheckBox ChkEnableBotMode;
+        private System.Windows.Forms.CheckBox chkEnableBotMode;
         private System.Windows.Forms.CheckBox chkDrawField;
         private System.Windows.Forms.CheckBox chkMouseControlMode;
         private System.Windows.Forms.CheckBox chkErrorlogToFile;
