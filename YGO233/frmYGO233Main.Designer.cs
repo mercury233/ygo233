@@ -155,7 +155,7 @@
             this.btnCheckAllFiles.Name = "btnCheckAllFiles";
             this.btnCheckAllFiles.Size = new System.Drawing.Size(196, 23);
             this.btnCheckAllFiles.TabIndex = 1;
-            this.btnCheckAllFiles.Text = "重新校验 YGOPro 文件";
+            this.btnCheckAllFiles.Text = "校验 YGOPro 文件完整性";
             this.btnCheckAllFiles.UseVisualStyleBackColor = true;
             // 
             // btnEnablePre
@@ -314,9 +314,9 @@
             this.chkDrawField.AutoSize = true;
             this.chkDrawField.Location = new System.Drawing.Point(11, 135);
             this.chkDrawField.Name = "chkDrawField";
-            this.chkDrawField.Size = new System.Drawing.Size(120, 16);
+            this.chkDrawField.Size = new System.Drawing.Size(132, 16);
             this.chkDrawField.TabIndex = 5;
-            this.chkDrawField.Text = "显示场地魔法背景";
+            this.chkDrawField.Text = "显示场地魔法卡背景";
             this.chkDrawField.UseVisualStyleBackColor = true;
             this.chkDrawField.CheckedChanged += new System.EventHandler(this.chkDrawField_CheckedChanged);
             // 
@@ -336,9 +336,9 @@
             this.chkErrorlogToFile.AutoSize = true;
             this.chkErrorlogToFile.Location = new System.Drawing.Point(11, 89);
             this.chkErrorlogToFile.Name = "chkErrorlogToFile";
-            this.chkErrorlogToFile.Size = new System.Drawing.Size(96, 16);
+            this.chkErrorlogToFile.Size = new System.Drawing.Size(120, 16);
             this.chkErrorlogToFile.TabIndex = 3;
-            this.chkErrorlogToFile.Text = "记录错误信息";
+            this.chkErrorlogToFile.Text = "记录脚本错误信息";
             this.chkErrorlogToFile.UseVisualStyleBackColor = true;
             this.chkErrorlogToFile.CheckedChanged += new System.EventHandler(this.chkErrorlogToFile_CheckedChanged);
             // 
@@ -347,9 +347,9 @@
             this.chkErrorlogToScreen.AutoSize = true;
             this.chkErrorlogToScreen.Location = new System.Drawing.Point(11, 66);
             this.chkErrorlogToScreen.Name = "chkErrorlogToScreen";
-            this.chkErrorlogToScreen.Size = new System.Drawing.Size(96, 16);
+            this.chkErrorlogToScreen.Size = new System.Drawing.Size(120, 16);
             this.chkErrorlogToScreen.TabIndex = 2;
-            this.chkErrorlogToScreen.Text = "显示错误信息";
+            this.chkErrorlogToScreen.Text = "显示脚本错误信息";
             this.chkErrorlogToScreen.UseVisualStyleBackColor = true;
             this.chkErrorlogToScreen.CheckedChanged += new System.EventHandler(this.chkErrorlogToScreen_CheckedChanged);
             // 
