@@ -13,16 +13,17 @@ namespace YGO233
     public partial class frmYGO233Main : Form
     {
         private bool YGOProRunning = true;
-        Timer Timer = new Timer();
+        private bool loading = false;
+        Timer waitYGOProTimer = new Timer();
 
         public frmYGO233Main()
         {
             InitializeComponent();
             LoadConfig();
             WaitYGOProExit(null, null);
-            Timer.Interval = 1000;
-            Timer.Tick += WaitYGOProExit;
-            Timer.Start();
+            waitYGOProTimer.Interval = 1000;
+            waitYGOProTimer.Tick += WaitYGOProExit;
+            waitYGOProTimer.Start();
         }
 
         private void WaitYGOProExit(object sender, EventArgs e)
@@ -49,6 +50,7 @@ namespace YGO233
         private void LoadConfig()
         {
             YGOProConfig.Load();
+            loading = true;
             chkDirect3D.Checked = YGOProConfig.GetBoolValue("use_d3d");
             chkImgScale.Checked = YGOProConfig.GetBoolValue("use_image_scale");
             chkErrorlogToScreen.Checked = (YGOProConfig.GetIntValue("errorlog") & 1) == 1;
@@ -59,6 +61,7 @@ namespace YGO233
             chkResizePopupMenu.Checked = YGOProConfig.GetBoolValue("resize_popup_menu");
             comboDefaultOT.SelectedIndex = YGOProConfig.GetIntValue("default_ot") - 1;
             comboAntiAlias.SelectedIndex = YGOProConfig.GetIntValue("antialias");
+            loading = false;
         }
 
         private void btnFinish_Click(object sender, EventArgs e)
@@ -68,51 +71,61 @@ namespace YGO233
 
         private void chkDirect3D_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetBoolValue("use_d3d", chkDirect3D.Checked);
         }
 
         private void chkImgScale_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetBoolValue("use_image_scale", chkImgScale.Checked);
         }
 
         private void chkErrorlogToScreen_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetIntValue("errorlog", (chkErrorlogToScreen.Checked ? 1 : 0) | (chkErrorlogToFile.Checked ? 2 : 0));
         }
 
         private void chkErrorlogToFile_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             chkErrorlogToScreen_CheckedChanged(sender, e);
         }
 
         private void chkMouseControlMode_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetBoolValue("control_mode", chkMouseControlMode.Checked);
         }
 
         private void chkDrawField_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetBoolValue("draw_field_spell", chkDrawField.Checked);
         }
 
         private void chkEnableBotMode_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetBoolValue("enable_bot_mode", chkEnableBotMode.Checked);
         }
 
         private void chkResizePopupMenu_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetBoolValue("resize_popup_menu", chkResizePopupMenu.Checked);
         }
 
         private void comboDefaultOT_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetIntValue("default_ot", comboDefaultOT.SelectedIndex + 1);
         }
 
         private void comboAntiAlias_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             YGOProConfig.SetIntValue("antialias", comboAntiAlias.SelectedIndex);
         }
     }
