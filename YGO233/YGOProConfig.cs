@@ -25,9 +25,9 @@ namespace YGO233
             parser.WriteFile("system.conf", data);
         }
 
-        public static string GetStringValue(string key)
+        public static string GetStringValue(string key, string _default = "")
         {
-            return data.Global[key];
+            return data.Global[key] ?? _default;
         }
 
         public static void SetStringValue(string key, string value)
@@ -36,9 +36,13 @@ namespace YGO233
             Save();
         }
 
-        public static bool GetBoolValue(string key)
+        public static bool GetBoolValue(string key, bool _default = false)
         {
-            return int.Parse(data.Global[key]) > 0;
+            int val;
+            if (int.TryParse(data.Global[key], out val))
+                return val > 0;
+            else
+                return _default;
         }
 
         public static void SetBoolValue(string key, bool value)
@@ -47,9 +51,13 @@ namespace YGO233
             Save();
         }
 
-        public static int GetIntValue(string key)
+        public static int GetIntValue(string key, int _default = 0)
         {
-            return int.Parse(data.Global[key]);
+            int val;
+            if (int.TryParse(data.Global[key], out val))
+                return val;
+            else
+                return _default;
         }
 
         public static void SetIntValue(string key, int value)
