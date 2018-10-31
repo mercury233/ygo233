@@ -6,11 +6,33 @@ using System.IO;
 
 namespace YGO233
 {
-    public static class Config
+    public class Config : ConfParser
     {
-        public static string YGOProExePath;
+        public string YGOProExePath;
 
-        public static bool FindYGOProExePath(string exeName)
+        public Config()
+        {
+        }
+
+        public void Load()
+        {
+            string filename = "ygo233.conf";
+            if (!File.Exists(filename))
+                Init();
+            else
+                Load(filename);
+        }
+
+        private void Init()
+        {
+            string filename = "ygo233.conf";
+            File.WriteAllText(filename, "#");
+            Load(filename);
+            SetBoolValue("ygopro_auto_update", true);
+            SetBoolValue("skip_existing_pics_when_updating_ygopro", false);
+        }
+
+        public bool FindYGOProExePath(string exeName)
         {
             if (File.Exists(exeName))
             {
@@ -20,7 +42,7 @@ namespace YGO233
             return false;
         }
 
-        public static bool FindYGOProExePath()
+        public bool FindYGOProExePath()
         {
             return FindYGOProExePath("YGOPro.exe");
         }

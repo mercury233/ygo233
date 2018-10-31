@@ -15,6 +15,7 @@ namespace YGO233
         private bool YGOProRunning = false;
         private bool loading = false;
         Timer waitYGOProTimer = new Timer();
+        YGOProConfig YGOProConfig = new YGOProConfig();
 
         public frmYGO233Main()
         {
@@ -64,6 +65,8 @@ namespace YGO233
             chkResizePopupMenu.Checked = YGOProConfig.GetBoolValue("resize_popup_menu");
             comboDefaultOT.SelectedIndex = YGOProConfig.GetIntValue("default_ot") - 1;
             comboAntiAlias.SelectedIndex = YGOProConfig.GetIntValue("antialias");
+            chkYGOProAutoUpdate.Checked = Program.Config.GetBoolValue("ygopro_auto_update");
+            chkSkipExistingPic.Checked = Program.Config.GetBoolValue("skip_existing_pics_when_updating_ygopro");
             loading = false;
         }
 
@@ -130,6 +133,18 @@ namespace YGO233
         {
             if (loading) return;
             YGOProConfig.SetIntValue("antialias", comboAntiAlias.SelectedIndex);
+        }
+
+        private void chkYGOProAutoUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (loading) return;
+            Program.Config.SetBoolValue("ygopro_auto_update", chkYGOProAutoUpdate.Checked);
+        }
+
+        private void chkSkipExistingPic_CheckedChanged(object sender, EventArgs e)
+        {
+            if (loading) return;
+            Program.Config.SetBoolValue("skip_existing_pics_when_updating_ygopro", chkSkipExistingPic.Checked);
         }
 
         private void btnAssocFiles_Click(object sender, EventArgs e)

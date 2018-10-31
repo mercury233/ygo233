@@ -21,14 +21,14 @@ namespace YGO233
             {
                 RegistryKey ydkKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\YGOPro.Deck");
                 ydkKey.SetValue("", "YGOPro 卡组");
-                ydkKey.CreateSubKey("DefaultIcon").SetValue("", Config.YGOProExePath);
-                ydkKey.CreateSubKey(@"shell\open\command").SetValue("", "\"" + Config.YGOProExePath + "\" \"%1\"");
+                ydkKey.CreateSubKey("DefaultIcon").SetValue("", Program.Config.YGOProExePath);
+                ydkKey.CreateSubKey(@"shell\open\command").SetValue("", "\"" + Program.Config.YGOProExePath + "\" \"%1\"");
                 Registry.CurrentUser.CreateSubKey(@"Software\Classes\.ydk").SetValue("", "YGOPro.Deck");
 
                 RegistryKey yrpKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\YGOPro.Replay");
                 yrpKey.SetValue("", "YGOPro 录像");
-                yrpKey.CreateSubKey("DefaultIcon").SetValue("", Config.YGOProExePath);
-                yrpKey.CreateSubKey(@"shell\open\command").SetValue("", "\"" + Config.YGOProExePath + "\" \"%1\"");
+                yrpKey.CreateSubKey("DefaultIcon").SetValue("", Program.Config.YGOProExePath);
+                yrpKey.CreateSubKey(@"shell\open\command").SetValue("", "\"" + Program.Config.YGOProExePath + "\" \"%1\"");
                 Registry.CurrentUser.CreateSubKey(@"Software\Classes\.yrp").SetValue("", "YGOPro.Replay");
 
                 const uint SHCNE_ASSOCCHANGED = 0x08000000;

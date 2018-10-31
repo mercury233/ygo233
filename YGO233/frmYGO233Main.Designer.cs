@@ -203,6 +203,7 @@
             this.chkYGOProAutoUpdate.TabIndex = 0;
             this.chkYGOProAutoUpdate.Text = "自动检查 YGOPro 的更新";
             this.chkYGOProAutoUpdate.UseVisualStyleBackColor = true;
+            this.chkYGOProAutoUpdate.CheckedChanged += new System.EventHandler(this.chkYGOProAutoUpdate_CheckedChanged);
             // 
             // chkSkipExistingPic
             // 
@@ -213,6 +214,7 @@
             this.chkSkipExistingPic.TabIndex = 1;
             this.chkSkipExistingPic.Text = "更新卡图时不更新已有的卡图";
             this.chkSkipExistingPic.UseVisualStyleBackColor = true;
+            this.chkSkipExistingPic.CheckedChanged += new System.EventHandler(this.chkSkipExistingPic_CheckedChanged);
             // 
             // tabPageYGOProSettings
             // 
