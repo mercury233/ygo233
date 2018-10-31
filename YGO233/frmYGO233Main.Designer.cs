@@ -69,7 +69,7 @@
             // 
             // btnFinish
             // 
-            this.btnFinish.Location = new System.Drawing.Point(185, 355);
+            this.btnFinish.Location = new System.Drawing.Point(184, 355);
             this.btnFinish.Name = "btnFinish";
             this.btnFinish.Size = new System.Drawing.Size(75, 23);
             this.btnFinish.TabIndex = 1;
@@ -112,6 +112,7 @@
             this.btnDonate.TabIndex = 6;
             this.btnDonate.Text = "捐助";
             this.btnDonate.UseVisualStyleBackColor = true;
+            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
             // 
             // btnAbout
             // 
@@ -121,6 +122,7 @@
             this.btnAbout.TabIndex = 5;
             this.btnAbout.Text = "关于";
             this.btnAbout.UseVisualStyleBackColor = true;
+            this.btnAbout.Click += new System.EventHandler(this.btnAbout_Click);
             // 
             // btnDeletePre
             // 

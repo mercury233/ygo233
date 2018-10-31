@@ -136,5 +136,16 @@ namespace YGO233
         {
             Utils.AssocFiles();
         }
+
+        private void btnDonate_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://afdian.net/@ygo233");
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            frmAbout frmAbout = new frmAbout();
+            frmAbout.ShowDialog();
+        }
     }
 }
