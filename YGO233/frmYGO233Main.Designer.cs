@@ -135,12 +135,14 @@
             // 
             // btnCleanOutdated
             // 
+            this.btnCleanOutdated.Enabled = false;
             this.btnCleanOutdated.Location = new System.Drawing.Point(19, 138);
             this.btnCleanOutdated.Name = "btnCleanOutdated";
             this.btnCleanOutdated.Size = new System.Drawing.Size(196, 23);
             this.btnCleanOutdated.TabIndex = 3;
             this.btnCleanOutdated.Text = "清理过期的卡图和脚本";
             this.btnCleanOutdated.UseVisualStyleBackColor = true;
+            this.btnCleanOutdated.Click += new System.EventHandler(this.btnCleanOutdated_Click);
             // 
             // btnAssocFiles
             // 

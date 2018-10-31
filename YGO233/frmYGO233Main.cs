@@ -150,5 +150,10 @@ namespace YGO233
             frmAbout frmAbout = new frmAbout();
             frmAbout.ShowDialog();
         }
+
+        private void btnCleanOutdated_Click(object sender, EventArgs e)
+        {
+            Utils.CleanOutdatedScriptsAndPics();
+        }
     }
 }
