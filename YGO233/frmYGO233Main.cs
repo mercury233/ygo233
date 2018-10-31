@@ -131,5 +131,10 @@ namespace YGO233
             if (loading) return;
             YGOProConfig.SetIntValue("antialias", comboAntiAlias.SelectedIndex);
         }
+
+        private void btnAssocFiles_Click(object sender, EventArgs e)
+        {
+            Utils.AssocFiles();
+        }
     }
 }

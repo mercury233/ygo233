@@ -148,6 +148,7 @@
             this.btnAssocFiles.TabIndex = 2;
             this.btnAssocFiles.Text = "设置双击打开卡组和录像文件";
             this.btnAssocFiles.UseVisualStyleBackColor = true;
+            this.btnAssocFiles.Click += new System.EventHandler(this.btnAssocFiles_Click);
             // 
             // btnCheckAllFiles
             // 
