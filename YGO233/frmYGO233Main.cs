@@ -134,7 +134,10 @@ namespace YGO233
 
         private void btnAssocFiles_Click(object sender, EventArgs e)
         {
-            Utils.AssocFiles();
+            if (Utils.AssocFiles())
+            {
+                MessageBox.Show(frmYGO233Main.ActiveForm, "已完成关联。", "YGO233", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void btnDonate_Click(object sender, EventArgs e)
