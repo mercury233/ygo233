@@ -12,7 +12,7 @@ namespace YGO233
 {
     public partial class frmYGO233Main : Form
     {
-        private bool YGOProRunning = true;
+        private bool YGOProRunning = false;
         private bool loading = false;
         Timer waitYGOProTimer = new Timer();
 
@@ -31,19 +31,22 @@ namespace YGO233
             Process[] processes = Process.GetProcessesByName("YGOPro");
             if (processes.Length == 0)
             {
-                groupBoxYGOProSettings.Text = "YGOPro 设置";
-                groupBoxYGOProSettings.Enabled = true;
                 if (YGOProRunning)
                 {
+                    groupBoxYGOProSettings.Text = "YGOPro 设置";
+                    groupBoxYGOProSettings.Enabled = true;
                     YGOProRunning = false;
                     LoadConfig();
                 }
             }
             else
             {
-                groupBoxYGOProSettings.Text = "YGOPro 设置 (YGOPro 关闭时才能修改)";
-                groupBoxYGOProSettings.Enabled = false;
-                YGOProRunning = true;
+                if (!YGOProRunning)
+                {
+                    groupBoxYGOProSettings.Text = "YGOPro 设置 (YGOPro 关闭时才能修改)";
+                    groupBoxYGOProSettings.Enabled = false;
+                    YGOProRunning = true;
+                }
             }
         }
 
