@@ -28,7 +28,10 @@ namespace YGO233
             string filename = "ygo233.conf";
             File.WriteAllText(filename, "#");
             Load(filename);
+            SetIntValue("ygopro_version", 0);
             SetBoolValue("ygopro_auto_update", true);
+            SetBoolValue("enable_pre_release", false);
+            SetIntValue("pre_release_version", 0);
             SetBoolValue("skip_existing_pics_when_updating_ygopro", false);
         }
 

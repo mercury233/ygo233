@@ -32,6 +32,7 @@
             this.btnFinish = new System.Windows.Forms.Button();
             this.tabPageTools = new System.Windows.Forms.TabPage();
             this.groupBoxTools = new System.Windows.Forms.GroupBox();
+            this.btnCheckYGOProUpdate = new System.Windows.Forms.Button();
             this.btnDonate = new System.Windows.Forms.Button();
             this.btnAbout = new System.Windows.Forms.Button();
             this.btnDeletePre = new System.Windows.Forms.Button();
@@ -90,6 +91,7 @@
             // 
             // groupBoxTools
             // 
+            this.groupBoxTools.Controls.Add(this.btnCheckYGOProUpdate);
             this.groupBoxTools.Controls.Add(this.btnDonate);
             this.groupBoxTools.Controls.Add(this.btnAbout);
             this.groupBoxTools.Controls.Add(this.btnDeletePre);
@@ -99,14 +101,24 @@
             this.groupBoxTools.Controls.Add(this.btnEnablePre);
             this.groupBoxTools.Location = new System.Drawing.Point(6, 6);
             this.groupBoxTools.Name = "groupBoxTools";
-            this.groupBoxTools.Size = new System.Drawing.Size(234, 221);
+            this.groupBoxTools.Size = new System.Drawing.Size(234, 254);
             this.groupBoxTools.TabIndex = 1;
             this.groupBoxTools.TabStop = false;
             this.groupBoxTools.Text = "功能";
             // 
+            // btnCheckYGOProUpdate
+            // 
+            this.btnCheckYGOProUpdate.Location = new System.Drawing.Point(19, 27);
+            this.btnCheckYGOProUpdate.Name = "btnCheckYGOProUpdate";
+            this.btnCheckYGOProUpdate.Size = new System.Drawing.Size(196, 23);
+            this.btnCheckYGOProUpdate.TabIndex = 7;
+            this.btnCheckYGOProUpdate.Text = "检查 YGOPro 更新";
+            this.btnCheckYGOProUpdate.UseVisualStyleBackColor = true;
+            this.btnCheckYGOProUpdate.Click += new System.EventHandler(this.btnCheckYGOProUpdate_Click);
+            // 
             // btnDonate
             // 
-            this.btnDonate.Location = new System.Drawing.Point(121, 175);
+            this.btnDonate.Location = new System.Drawing.Point(121, 212);
             this.btnDonate.Name = "btnDonate";
             this.btnDonate.Size = new System.Drawing.Size(93, 23);
             this.btnDonate.TabIndex = 6;
@@ -116,7 +128,7 @@
             // 
             // btnAbout
             // 
-            this.btnAbout.Location = new System.Drawing.Point(19, 175);
+            this.btnAbout.Location = new System.Drawing.Point(19, 212);
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(93, 23);
             this.btnAbout.TabIndex = 5;
@@ -126,7 +138,7 @@
             // 
             // btnDeletePre
             // 
-            this.btnDeletePre.Location = new System.Drawing.Point(121, 27);
+            this.btnDeletePre.Location = new System.Drawing.Point(121, 64);
             this.btnDeletePre.Name = "btnDeletePre";
             this.btnDeletePre.Size = new System.Drawing.Size(93, 23);
             this.btnDeletePre.TabIndex = 4;
@@ -136,7 +148,7 @@
             // btnCleanOutdated
             // 
             this.btnCleanOutdated.Enabled = false;
-            this.btnCleanOutdated.Location = new System.Drawing.Point(19, 138);
+            this.btnCleanOutdated.Location = new System.Drawing.Point(19, 175);
             this.btnCleanOutdated.Name = "btnCleanOutdated";
             this.btnCleanOutdated.Size = new System.Drawing.Size(196, 23);
             this.btnCleanOutdated.TabIndex = 3;
@@ -146,7 +158,7 @@
             // 
             // btnAssocFiles
             // 
-            this.btnAssocFiles.Location = new System.Drawing.Point(19, 101);
+            this.btnAssocFiles.Location = new System.Drawing.Point(19, 138);
             this.btnAssocFiles.Name = "btnAssocFiles";
             this.btnAssocFiles.Size = new System.Drawing.Size(196, 23);
             this.btnAssocFiles.TabIndex = 2;
@@ -156,7 +168,7 @@
             // 
             // btnCheckAllFiles
             // 
-            this.btnCheckAllFiles.Location = new System.Drawing.Point(19, 64);
+            this.btnCheckAllFiles.Location = new System.Drawing.Point(19, 101);
             this.btnCheckAllFiles.Name = "btnCheckAllFiles";
             this.btnCheckAllFiles.Size = new System.Drawing.Size(196, 23);
             this.btnCheckAllFiles.TabIndex = 1;
@@ -165,7 +177,7 @@
             // 
             // btnEnablePre
             // 
-            this.btnEnablePre.Location = new System.Drawing.Point(19, 27);
+            this.btnEnablePre.Location = new System.Drawing.Point(19, 64);
             this.btnEnablePre.Name = "btnEnablePre";
             this.btnEnablePre.Size = new System.Drawing.Size(93, 23);
             this.btnEnablePre.TabIndex = 0;
@@ -449,6 +461,7 @@
         private System.Windows.Forms.Button btnCheckAllFiles;
         private System.Windows.Forms.Button btnDonate;
         private System.Windows.Forms.Button btnAbout;
+        private System.Windows.Forms.Button btnCheckYGOProUpdate;
     }
 }
 

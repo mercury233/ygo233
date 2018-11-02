@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Data.SQLite;
+using System.Net;
 
 namespace YGO233
 {
@@ -65,6 +66,25 @@ namespace YGO233
                 GetIDsFromCDB(cdb, knownIDs);
             }
             // TODO: 需要知道哪些脚本是先行卡需要的，先鸽了
+        }
+
+        public static void GetStringAsync(string url, Func<string, int> callback, Func<Exception, int> fail)
+        {
+            WebClient client = new WebClient();
+            client.Encoding = Encoding.UTF8;
+            client.DownloadStringCompleted += (sender, e) =>
+            {
+                if (e.Error != null)
+                    fail(e.Error);
+                else
+                    callback(e.Result);
+            };
+            client.DownloadStringAsync(new Uri(url));
+        }
+
+        public static string FixCRLF(string txt)
+        {
+            return txt.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
         }
     }
 }

@@ -170,5 +170,12 @@ namespace YGO233
         {
             Utils.CleanOutdatedScriptsAndPics();
         }
+
+        private void btnCheckYGOProUpdate_Click(object sender, EventArgs e)
+        {
+            frmUpdate frmUpdate = new frmUpdate();
+            frmUpdate.CheckForYGOProUpdate();
+            frmUpdate.ShowDialog();
+        }
     }
 }

@@ -23,14 +23,30 @@ namespace YGO233
                 MessageBox.Show("没有找到 YGOPro，请将 YGO233 解压到 YGOPro 文件夹运行。", "YGO233", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
+            Config.Load();
             if (args.Count() > 0)
             {
                 if (args[0] == "/assoc")
                 {
                     return Utils.AssocFiles() ? 0 : 2;
                 }
+                if (args[0] == "/startup")
+                {
+                    if (Config.GetBoolValue("ygopro_auto_update"))
+                    {
+                        frmUpdate frmUpdate = new frmUpdate();
+                        frmUpdate.WindowState = FormWindowState.Minimized;
+                        frmUpdate.ShowInTaskbar = false;
+                        frmUpdate.CheckForYGOProUpdateInBackground();
+                        Application.Run(frmUpdate);
+                        return 0;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
             }
-            Config.Load();
             Application.Run(new frmYGO233Main());
             return 0;
         }
