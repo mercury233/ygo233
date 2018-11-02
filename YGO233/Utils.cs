@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Data.SQLite;
 using System.Net;
+using System.Net.Cache;
 
 namespace YGO233
 {
@@ -71,6 +72,10 @@ namespace YGO233
         public static void GetStringAsync(string url, Func<string, int> callback, Func<Exception, int> fail)
         {
             WebClient client = new WebClient();
+            client.Proxy = null;
+            client.Credentials = CredentialCache.DefaultCredentials;
+            client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+            client.Headers.Add(HttpRequestHeader.UserAgent, "YGO233");
             client.Encoding = Encoding.UTF8;
             client.DownloadStringCompleted += (sender, e) =>
             {
