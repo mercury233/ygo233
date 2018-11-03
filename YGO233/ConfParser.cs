@@ -71,5 +71,20 @@ namespace YGO233
             data.Global[key] = value.ToString();
             Save();
         }
+
+        public UInt64 GetUInt64Value(string key, UInt64 _default = 0)
+        {
+            UInt64 val;
+            if (UInt64.TryParse(data.Global[key], out val))
+                return val;
+            else
+                return _default;
+        }
+
+        public void SetUInt64Value(string key, UInt64 value)
+        {
+            data.Global[key] = value.ToString();
+            Save();
+        }
     }
 }

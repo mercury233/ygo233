@@ -47,8 +47,8 @@ namespace YGO233
             JObject result = (JObject)JsonConvert.DeserializeObject(res);
             var ygoproResult = result["ygopro"];
             var preResult = result["pre"];
-            bool haveYGOProUpdate = UInt64.Parse(ygoproResult["version"].ToString()) > (UInt64)Program.Config.GetIntValue("ygopro_version");
-            bool havePreUpdate = Program.Config.GetBoolValue("enable_pre_release") && UInt64.Parse(preResult["version"].ToString()) > (UInt64)Program.Config.GetIntValue("pre_release_version");
+            bool haveYGOProUpdate = UInt64.Parse(ygoproResult["version"].ToString()) > Program.Config.GetUInt64Value("ygopro_version");
+            bool havePreUpdate = Program.Config.GetBoolValue("enable_pre_release") && UInt64.Parse(preResult["version"].ToString()) > Program.Config.GetUInt64Value("pre_release_version");
             if (haveYGOProUpdate && havePreUpdate)
             {
                 labelUpdate.Text = String.Format("YGOPro 已于 {0} 发布了更新，先行卡已于 {1} 发布了更新。", ygoproResult["date"], preResult["date"]);
