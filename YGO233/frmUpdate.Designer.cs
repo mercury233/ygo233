@@ -34,6 +34,7 @@
             this.btnStartUpdate = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.progressUpdate = new System.Windows.Forms.ProgressBar();
+            this.btnFinish = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // labelUpdate
@@ -84,11 +85,22 @@
             this.progressUpdate.TabIndex = 4;
             this.progressUpdate.Visible = false;
             // 
+            // btnFinish
+            // 
+            this.btnFinish.Location = new System.Drawing.Point(366, 37);
+            this.btnFinish.Name = "btnFinish";
+            this.btnFinish.Size = new System.Drawing.Size(75, 23);
+            this.btnFinish.TabIndex = 5;
+            this.btnFinish.Text = "完成";
+            this.btnFinish.UseVisualStyleBackColor = true;
+            this.btnFinish.Click += new System.EventHandler(this.btnFinish_Click);
+            // 
             // frmUpdate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(453, 252);
+            this.Controls.Add(this.btnFinish);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnStartUpdate);
             this.Controls.Add(this.textUpdateDetails);
@@ -112,5 +124,6 @@
         private System.Windows.Forms.Button btnStartUpdate;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.ProgressBar progressUpdate;
+        private System.Windows.Forms.Button btnFinish;
     }
 }

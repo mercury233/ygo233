@@ -24,6 +24,7 @@ namespace YGO233
         {
             btnStartUpdate.Visible = false;
             btnCancel.Visible = false;
+            btnFinish.Visible = false;
             progressUpdate.Visible = false;
             Downloader.GetStringAsync(checkUrl, CheckYGOProUpdateResult, CheckYGOProUpdateFail);
         }
@@ -63,8 +64,20 @@ namespace YGO233
                 labelUpdate.Text = String.Format("先行卡已于 {1} 发布了更新。", ygoproResult["date"], preResult["date"]);
                 textUpdateDetails.Text = Utils.FixCRLF(preResult["txt"].ToString());
             }
-            btnStartUpdate.Visible = true;
-            btnCancel.Visible = true;
+            else
+            {
+                labelUpdate.Text = "没有找到更新。";
+                textUpdateDetails.Text = "";
+            }
+            if (haveYGOProUpdate || havePreUpdate)
+            {
+                btnStartUpdate.Visible = true;
+                btnCancel.Visible = true;
+            }
+            else
+            {
+                btnFinish.Visible = true;
+            }
             progressUpdate.Visible = false;
             return 0;
         }
@@ -79,11 +92,16 @@ namespace YGO233
         {
             labelUpdate.Text = "检查更新失败！";
             textUpdateDetails.Text = e.Message;
-            btnCancel.Visible = true;
+            btnFinish.Visible = true;
             return 0;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnFinish_Click(object sender, EventArgs e)
         {
             Close();
         }
