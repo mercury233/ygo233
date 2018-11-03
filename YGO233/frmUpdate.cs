@@ -25,12 +25,12 @@ namespace YGO233
             btnStartUpdate.Visible = false;
             btnCancel.Visible = false;
             progressUpdate.Visible = false;
-            Utils.GetStringAsync(checkUrl, CheckYGOProUpdateResult, CheckYGOProUpdateFail);
+            Downloader.GetStringAsync(checkUrl, CheckYGOProUpdateResult, CheckYGOProUpdateFail);
         }
 
         public void CheckForYGOProUpdateInBackground()
         {
-            Utils.GetStringAsync(checkUrl, CheckYGOProUpdateResultInBackground, CheckYGOProUpdateFailInBackground);
+            Downloader.GetStringAsync(checkUrl, CheckYGOProUpdateResultInBackground, CheckYGOProUpdateFailInBackground);
         }
 
         private int CheckYGOProUpdateResultInBackground(string res)
