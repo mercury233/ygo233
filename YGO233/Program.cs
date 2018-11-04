@@ -18,6 +18,7 @@ namespace YGO233
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Config = new Config();
+            Utils.Init();
             if (!Config.FindYGOProExePath())
             {
                 MessageBox.Show("没有找到 YGOPro，请将 YGO233 解压到 YGOPro 文件夹运行。", "YGO233", MessageBoxButtons.OK, MessageBoxIcon.Error);

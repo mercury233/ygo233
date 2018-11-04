@@ -5,8 +5,12 @@ using Microsoft.Win32;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.IO;
 using System.Data.SQLite;
+using System.Diagnostics;
+using System.Threading;
+using SevenZip;
 
 namespace YGO233
 {
@@ -14,6 +18,14 @@ namespace YGO233
     {
         [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
+        private static MD5 Hasher;
+
+        public static void Init()
+        {
+            SevenZipBase.SetLibraryPath("7z.dll");
+            Hasher = MD5.Create();
+        }
 
         public static bool AssocFiles()
         {
@@ -42,6 +54,36 @@ namespace YGO233
                 MessageBox.Show(frmYGO233Main.ActiveForm.Visible ? frmYGO233Main.ActiveForm : null, "更新注册表失败，请以管理员权限运行。", "YGO233", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
+        }
+
+        public static bool CloseYGOPro()
+        {
+            Process[] processes = Process.GetProcessesByName("YGOPro");
+            int tryCount = 0;
+            while (tryCount < 30 && processes.Length > 0)
+            {
+                tryCount++;
+                processes[0].CloseMainWindow();
+                Thread.Sleep(100);
+                processes = Process.GetProcessesByName("YGOPro");
+            }
+            return processes.Length == 0;
+        }
+
+        public static void ExtractFile(string name, string path, Func<string, int> callback)
+        {
+            SevenZipExtractor ex = new SevenZipExtractor(name);
+            ex.ExtractionFinished += (sender, e)=>
+            {
+                callback(name);
+            };
+            ex.BeginExtractArchive(path);
+        }
+
+        public static string HashFile(string name)
+        {
+            var hash = Hasher.ComputeHash(File.OpenRead(name));
+            return BitConverter.ToString(hash).Replace("-", "").Substring(0, 8).ToLowerInvariant();
         }
 
         private static void GetIDsFromCDB(string cdbPath, HashSet<int> list)

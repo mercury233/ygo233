@@ -66,6 +66,7 @@
             this.btnStartUpdate.TabIndex = 2;
             this.btnStartUpdate.Text = "关闭 YGOPro 并下载安装";
             this.btnStartUpdate.UseVisualStyleBackColor = true;
+            this.btnStartUpdate.Click += new System.EventHandler(this.btnStartUpdate_Click);
             // 
             // btnCancel
             // 
