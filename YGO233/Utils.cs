@@ -25,6 +25,7 @@ namespace YGO233
         {
             SevenZipBase.SetLibraryPath("7z.dll");
             Hasher = MD5.Create();
+            System.Net.ServicePointManager.DefaultConnectionLimit = 20;
         }
 
         public static bool AssocFiles()

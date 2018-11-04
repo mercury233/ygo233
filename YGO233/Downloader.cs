@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Cache;
+using System.IO;
 
 namespace YGO233
 {
     public static class Downloader
     {
+        private static List<DownloadTask> tasks = new List<DownloadTask>();
+
         public static void GetStringAsync(string url, Func<string, int> callback, Func<Exception, int> fail)
         {
             YGO233WebClient client = new YGO233WebClient();
@@ -24,6 +27,7 @@ namespace YGO233
 
         public static void DownloadFileAsync(string url, string name, string path, Func<string, int> callback, Func<Exception, int> fail)
         {
+            new FileInfo(path).Directory.Create();
             YGO233WebClient client = new YGO233WebClient();
             client.DownloadFileCompleted += (sender, e) =>
             {
@@ -35,9 +39,49 @@ namespace YGO233
             client.DownloadFileAsync(new Uri(url), path);
         }
 
-        public static void DownloadFileAsync(DownloadTask task, Func<string, int> callback, Func<Exception, int> fail)
+        public static void DownloadFileAsync(DownloadTask task, Func<DownloadTask, int> callback, Func<DownloadTask, Exception, int> fail)
         {
-            DownloadFileAsync(task.Url, task.Name, task.Path, callback, fail);
+            new FileInfo(task.Path).Directory.Create();
+            task.Started = true;
+            YGO233WebClient client = new YGO233WebClient();
+            client.DownloadFileCompleted += (sender, e) =>
+            {
+                task.Finished = true;
+                if (e.Error != null)
+                    fail(task, e.Error);
+                else
+                    callback(task);
+            };
+            client.DownloadFileAsync(new Uri(task.Url), task.Path);
+        }
+
+        public static void ClearTasks()
+        {
+            tasks.Clear();
+        }
+
+        public static void AddTask(string url, string name, string path)
+        {
+            tasks.Add(new DownloadTask(url, name, path));
+        }
+
+        public static void AddTask(DownloadTask task)
+        {
+            tasks.Add(task);
+        }
+
+        public static void ProcressDownload(Func<int, int, string, int> one, Func<int, int> finish)
+        {
+            if (tasks.All(task => task.Finished))
+                finish(tasks.Count);
+            int downloadingCount = tasks.Count(task => task.Started && !task.Finished);
+            if (downloadingCount < 5)
+            {
+                var newTasks = tasks.Where(task => !task.Started && !task.Finished).Take(5 - downloadingCount).ToList();
+                newTasks.ForEach(task=> {
+                    DownloadFileAsync(task, (_task)=> { one(tasks.Count, tasks.Count(__task=>__task.Finished), task.Name); ProcressDownload(one, finish); return 0; }, (_task, _) => { one(tasks.Count, tasks.Count(__task => __task.Finished), task.Name); ProcressDownload(one, finish); return 0; });
+                });
+            }
         }
     }
 
@@ -46,14 +90,16 @@ namespace YGO233
         public string Url;
         public string Name;
         public string Path;
-        public int Size;
+        public bool Started;
+        public bool Finished;
 
-        public DownloadTask(string url, string name, string path, int size)
+        public DownloadTask(string url, string name, string path)
         {
             Url = url;
             Name = name;
             Path = path;
-            Size = size;
+            Started = false;
+            Finished = false;
         }
     }
 

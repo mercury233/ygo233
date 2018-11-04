@@ -17,6 +17,7 @@ namespace YGO233
     {
         private static string checkUrl = @"http://127.0.0.1/test.json";
         private static string dataUrl = @"http://127.0.0.1/data.7z";
+        private static string downloadBase = @"http://127.0.0.1/";
 
         public List<string> filesToDownload;
         public List<string> packagesToDownload ;
@@ -146,14 +147,14 @@ namespace YGO233
 
         private int ParseUpdateData(string name)
         {
-            progressUpdate.Value = 40;
+            progressUpdate.Value = 30;
             Utils.ExtractFile(name, "temp", ParseUpdateDataStep2);
             return 0;
         }
 
         private int ParseUpdateDataStep2(string name)
         {
-            progressUpdate.Value = 50;
+            progressUpdate.Value = 33;
             filesToDownload = new List<string>();
             packagesToDownload = new List<string>();
 
@@ -162,24 +163,29 @@ namespace YGO233
             files.ToList().ForEach(file=> {
                 Application.DoEvents();
                 string filename = file["name"].ToString();
-                if (!File.Exists(filename) || new FileInfo(filename).Length != Int64.Parse(file["size"].ToString()))
+                if (!File.Exists(filename) || Utils.HashFile(filename) != file["hash"].ToString())
                 {
                     filesToDownload.Add(filename);
                 }
             });
             var folders = fileDatas["folders"];
+            int fcount = folders.Count() + 1;
+            int step = 64 / fcount;
+            progressUpdate.Value += step;
             folders.ToList().ForEach(folder=> {
                 var foldername = folder.ToObject<JProperty>().Name + @"\";
                 var ffiles = folder.First.ToList();
                 ffiles.ForEach(file=> {
                     Application.DoEvents();
                     string filename = foldername + file["name"].ToString();
-                    //if (!File.Exists(filename) || Utils.HashFile(filename) != file["hash"].ToString())
-                    if (!File.Exists(filename) || new FileInfo(filename).Length != Int64.Parse(file["size"].ToString()))
+                    if (!File.Exists(filename)
+                        || new FileInfo(filename).Length != Int64.Parse(file["size"].ToString())
+                        || (!filename.Contains(".jpg") && Utils.HashFile(filename) != file["hash"].ToString()))
                     {
                         filesToDownload.Add(filename);
                     }
                 });
+                progressUpdate.Value += step;
             });
             //Debug.Write(String.Join("\n", filesToDownload));
 
@@ -205,6 +211,30 @@ namespace YGO233
             //Debug.Write(String.Join("\n", packagesToDownload));
 
             progressUpdate.Value = 100;
+
+            filesToDownload.ForEach(file => {
+                Downloader.AddTask(downloadBase + file, file, @"temp\files\" + file);
+            });
+            packagesToDownload.ForEach(file => {
+                Downloader.AddTask(downloadBase + file, file, @"temp\packages\" + file);
+            });
+            Downloader.ProcressDownload(OneDownloaded, FinishDownloaded);
+
+            return 0;
+        }
+
+        public int OneDownloaded(int total, int finished, string name)
+        {
+            progressUpdate.Maximum = total;
+            progressUpdate.Value = finished;
+            labelUpdate.Text = "已下载 " + name;
+            Application.DoEvents();
+            return 0;
+        }
+
+        public int FinishDownloaded(int total)
+        {
+            labelUpdate.Text = "已完成" + total + "个文件的下载。";
             return 0;
         }
     }
