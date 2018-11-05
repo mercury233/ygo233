@@ -138,8 +138,8 @@ namespace YGO233
             progressUpdate.Maximum = 100;
             progressUpdate.Visible = true;
 
-            Directory.CreateDirectory("temp");
-            Downloader.DownloadFileAsync(dataUrl, @"temp\data.7z", @"temp\data.7z", ParseUpdateData, DownloadFail);
+            Directory.CreateDirectory("ygo233temp");
+            Downloader.DownloadFileAsync(dataUrl, @"ygo233temp\data.7z", @"ygo233temp\data.7z", ParseUpdateData, DownloadFail);
         }
 
         private int DownloadFail(Exception e)
@@ -153,7 +153,7 @@ namespace YGO233
         private int ParseUpdateData(string name)
         {
             progressUpdate.Value = 30;
-            Utils.ExtractFile(name, "temp", ParseUpdateDataStep2);
+            Utils.ExtractFile(name, "ygo233temp", ParseUpdateDataStep2);
             return 0;
         }
 
@@ -163,7 +163,7 @@ namespace YGO233
             filesToDownload = new List<string>();
             packagesToDownload = new List<string>();
 
-            JObject fileDatas = (JObject)JsonConvert.DeserializeObject(File.ReadAllText(@"temp\files.json"));
+            JObject fileDatas = (JObject)JsonConvert.DeserializeObject(File.ReadAllText(@"ygo233temp\files.json"));
             var files = fileDatas["files"];
             files.ToList().ForEach(file=> {
                 Application.DoEvents();
@@ -194,7 +194,7 @@ namespace YGO233
             });
             //Debug.Write(String.Join("\n", filesToDownload));
 
-            JObject packageDatas = (JObject)JsonConvert.DeserializeObject(File.ReadAllText(@"temp\packages.json"));
+            JObject packageDatas = (JObject)JsonConvert.DeserializeObject(File.ReadAllText(@"ygo233temp\packages.json"));
             var packages = packageDatas["packages"];
             packages.ToList().ForEach(package=> {
                 var packageFiles = package["files"].ToList();
@@ -217,11 +217,11 @@ namespace YGO233
 
             progressUpdate.Value = 100;
 
-            filesToDownload.ForEach(file => {
-                Downloader.AddTask(downloadBase + file, file, @"temp\files\" + file);
-            });
             packagesToDownload.ForEach(file => {
-                Downloader.AddTask(downloadBase + file, file, @"temp\packages\" + file);
+                Downloader.AddTask(downloadBase + file, file, @"ygo233temp\packages\" + file);
+            });
+            filesToDownload.ForEach(file => {
+                Downloader.AddTask(downloadBase + file, file, @"ygo233temp\files\" + file);
             });
             Downloader.ProcressDownload(OneDownloaded, FinishDownloaded);
 
@@ -232,7 +232,7 @@ namespace YGO233
         {
             progressUpdate.Maximum = total;
             progressUpdate.Value = finished;
-            labelUpdate.Text = "已下载 " + name;
+            labelUpdate.Text = String.Format("正在下载({0}/{1})...", finished, total);
             Application.DoEvents();
             return 0;
         }

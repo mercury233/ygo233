@@ -112,17 +112,17 @@ namespace YGO233
 
         public static bool DeleteTempFolder()
         {
-            if (File.Exists("temp"))
+            if (File.Exists("ygo233temp"))
             {
                 return false;
             }
-            if (!Directory.Exists("temp"))
+            if (!Directory.Exists("ygo233temp"))
             {
                 return true;
             }
             try
             {
-                Directory.Delete("temp", recursive: true);
+                Directory.Delete("ygo233temp", recursive: true);
             }
             catch
             {

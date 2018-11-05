@@ -11,6 +11,7 @@ namespace YGO233
     public static class Downloader
     {
         private static List<DownloadTask> tasks = new List<DownloadTask>();
+        private static bool allFinished = false;
 
         public static void GetStringAsync(string url, Func<string, int> callback, Func<Exception, int> fail)
         {
@@ -58,22 +59,29 @@ namespace YGO233
         public static void ClearTasks()
         {
             tasks.Clear();
+            allFinished = false;
         }
 
         public static void AddTask(string url, string name, string path)
         {
             tasks.Add(new DownloadTask(url, name, path));
+            allFinished = false;
         }
 
         public static void AddTask(DownloadTask task)
         {
             tasks.Add(task);
+            allFinished = false;
         }
 
         public static void ProcressDownload(Func<int, int, string, int> one, Func<int, int> finish)
         {
-            if (tasks.All(task => task.Finished))
+            if (!allFinished && tasks.All(task => task.Finished))
+            {
+                allFinished = true;
                 finish(tasks.Count);
+                return;
+            }
             int downloadingCount = tasks.Count(task => task.Started && !task.Finished);
             if (downloadingCount < 5)
             {
