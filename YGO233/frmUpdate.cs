@@ -124,6 +124,11 @@ namespace YGO233
                 MessageBox.Show(frmUpdate.ActiveForm, "关闭 YGOPro 失败，请手动关闭或稍后重试。", "YGO233", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            if (!Utils.DeleteTempFolder())
+            {
+                MessageBox.Show(frmUpdate.ActiveForm, "未能为更新准备临时文件夹，请稍后重试。", "YGO233", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             labelUpdate.Text = "正在获取更新信息...";
             btnStartUpdate.Visible = false;
             btnCancel.Visible = false;

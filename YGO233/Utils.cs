@@ -110,6 +110,27 @@ namespace YGO233
             // TODO: 需要知道哪些脚本是先行卡需要的，先鸽了
         }
 
+        public static bool DeleteTempFolder()
+        {
+            if (File.Exists("temp"))
+            {
+                return false;
+            }
+            if (!Directory.Exists("temp"))
+            {
+                return true;
+            }
+            try
+            {
+                Directory.Delete("temp", recursive: true);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static string FixCRLF(string txt)
         {
             return txt.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
