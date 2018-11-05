@@ -87,6 +87,33 @@ namespace YGO233
             return BitConverter.ToString(hash).Replace("-", "").Substring(0, 8).ToLowerInvariant();
         }
 
+        private static void CopyAll(DirectoryInfo source, DirectoryInfo target, Func<int> one)
+        {
+            if (Directory.Exists(target.FullName) == false)
+            {
+                Directory.CreateDirectory(target.FullName);
+            }
+
+            bool skip = Program.Config.GetBoolValue("skip_existing_pics_when_updating_ygopro");
+            foreach (FileInfo fi in source.GetFiles())
+            {
+                one();
+                if (!skip || fi.Extension.ToLower() != ".jpg")
+                    fi.CopyTo(Path.Combine(target.ToString(), fi.Name), overwrite: true);
+            }
+
+            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            {
+                DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
+                CopyAll(diSourceSubDir, nextTargetSubDir, one);
+            }
+        }
+
+        public static void CopyToYGOPro(string source, Func<int> one)
+        {
+            CopyAll(new DirectoryInfo(source), new DirectoryInfo("temp"), one);
+        }
+
         private static void GetIDsFromCDB(string cdbPath, HashSet<int> list)
         {
             SQLiteConnection conn = new SQLiteConnection("Data Source=" + cdbPath);

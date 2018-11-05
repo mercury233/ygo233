@@ -15,7 +15,7 @@ namespace YGO233
 {
     public partial class frmUpdate : Form
     {
-        private static string checkUrl = @"http://127.0.0.1/test.json";
+        private static string checkUrl = @"http://127.0.0.1/test.conf";
         private static string dataUrl = @"http://127.0.0.1/data.7z";
         private static string downloadBase = @"http://127.0.0.1/";
 
@@ -240,7 +240,52 @@ namespace YGO233
         public int FinishDownloaded(int total)
         {
             labelUpdate.Text = "已完成" + total + "个文件的下载。";
+            progressUpdate.Value = progressUpdate.Maximum;
+            Application.DoEvents();
+            labelUpdate.Text = "正在安装...";
+            StartExtractPackages();
             return 0;
+        }
+
+        private int StartExtractPackages()
+        {
+            progressUpdate.Value = 0;
+            progressUpdate.Maximum = packagesToDownload.Count * 2;
+            ProcressExtractPackage("");
+            return 0;
+        }
+
+        private int ProcressExtractPackage(string _)
+        {
+            if (packagesToDownload.Count == 0)
+            {
+                InstallFiles();
+            }
+            else
+            {
+                progressUpdate.Value += 1;
+                string file = packagesToDownload[0];
+                packagesToDownload.RemoveAt(0);
+                Utils.ExtractFile(@"ygo233temp\packages\" + file, @"ygo233temp\files", ProcressExtractPackage);
+            }
+            return 0;
+        }
+
+        private int InstallFiles()
+        {
+            int count = Directory.GetFiles(@"ygo233temp\files", "*", SearchOption.AllDirectories).Length;
+            progressUpdate.Maximum = count * 2;
+            progressUpdate.Value = count;
+            Utils.CopyToYGOPro(@"ygo233temp\files", ()=> { progressUpdate.Value++; Application.DoEvents(); return 0; });
+            InstallFinish();
+            return 0;
+        }
+
+        private void InstallFinish()
+        {
+            progressUpdate.Visible = false;
+            labelUpdate.Text = "更新完成。";
+            btnFinish.Visible = true;
         }
     }
 }
